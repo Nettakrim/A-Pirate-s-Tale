@@ -15,14 +15,14 @@ public class Island : MonoBehaviour
     public float UpdateActive() {
         float distance = Vector3.Distance(Player.getPosition(), transform.position);
         if (gameObject.activeSelf) {
-            if (distance > 20) {
+            if (distance > 15) {
                 gameObject.SetActive(false);
             }
         } else {
-            if (distance < 20) {
+            if (distance < 15) {
                 gameObject.SetActive(true);
             }
-            if (distance > 40) {
+            if (distance > 30) {
                 Destroy(gameObject);
                 return -1;
             }
@@ -53,7 +53,7 @@ public class Island : MonoBehaviour
 
         RemoveSmallLoops();
 
-        AddBays();
+        AddBays();  
 
         //string s = "";
         for (int x = 0; x<sizeX; x++) {
@@ -67,7 +67,7 @@ public class Island : MonoBehaviour
         
         terrainManager.GenerateTreasure(transform, new Vector3(0,0,0));
 
-        terrainManager.GenerateEnemies(transform, new Vector3(0,1,0), this);
+        AddEnemies(terrainManager);
     }
 
     public void FloodConnect(int x, int y) {
@@ -142,6 +142,13 @@ public class Island : MonoBehaviour
         nodes[sizeX-1,rightBay].AddBay();
         nodes[bottomBay,0].AddBay();
         nodes[topBay,sizeY-1].AddBay();
+    }
+
+    public void AddEnemies(TerrainManager terrainManager) {
+        for (int i = 3; i < 6; i++) {
+            Vector3 pos = new Vector3(Random.Range(0,sizeX), 1, Random.Range(0,sizeY)) - new Vector3((sizeX-1)/2, 0, (sizeY-1)/2);
+            terrainManager.GenerateEnemies(transform, pos, this, i);
+        }
     }
 
     public void Connect(int x, int y, int direction) {

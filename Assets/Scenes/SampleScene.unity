@@ -500,6 +500,7 @@ GameObject:
   - component: {fileID: 541193118}
   - component: {fileID: 541193120}
   - component: {fileID: 541193119}
+  - component: {fileID: 541193121}
   m_Layer: 2
   m_Name: Band
   m_TagString: Untagged
@@ -551,6 +552,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &541193121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541193117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c498e7df746fd4b9265539d483616c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localFollowSpeed: 0.2
+  prefab: {fileID: 8712967857371458162, guid: 01753b957cdb6dd419085c3861295fd4, type: 3}
 --- !u!1 &588888261
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,6 +745,7 @@ MonoBehaviour:
   rotateSpeed: 8
   cameraFollowSpeed: 4
   cameraT: {fileID: 1583978243}
+  startingPirates: 0
 --- !u!4 &834678171
 Transform:
   m_ObjectHideFlags: 0
@@ -1502,6 +1518,7 @@ MonoBehaviour:
     treasures:
       variations:
       - {fileID: 2537148328925017626, guid: a74ad1187d0a50146826cf9456be9250, type: 3}
+    enemies: {fileID: 3487177022428174528, guid: 464adaa955ea4b449b181908f947c965, type: 3}
   islandPrefab: {fileID: 814508476399810245, guid: b8e40f306e5a87c4b98866472c46172f, type: 3}
   islandsParent: {fileID: 1642595425}
 --- !u!4 &1733673385

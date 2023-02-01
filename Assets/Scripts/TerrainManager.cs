@@ -62,11 +62,11 @@ public class TerrainManager {
         treasures.Generate(parent, localPosition, new int[]{0,1,2,3});
     }
 
-    public void GenerateEnemies(Transform parent, Vector3 localPosition, Island island) {
+    public void GenerateEnemies(Transform parent, Vector3 localPosition, Island island, int amount) {
         EnemyBand band = Object.Instantiate(enemies, parent);
         band.transform.localPosition = localPosition;
         band.island = island;
-        band.AddPeople(2);
+        band.AddPeople(amount);
     }
 
     private TerrainSection getTerrainSection(int type) {
