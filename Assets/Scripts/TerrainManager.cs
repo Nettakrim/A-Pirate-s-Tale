@@ -15,6 +15,10 @@ public class TerrainManager {
     [SerializeField] private TerrainSection cliffCorners;
     [SerializeField] private TerrainSection bays;
 
+    [SerializeField] private TerrainSection treasures;
+
+    [SerializeField] private EnemyBand enemies;
+
     private static PathConnection[] connectionCombinations = new PathConnection[] {
         new PathConnection(0, new int[]{0,1,2,3}),
         new PathConnection(1, new int[]{0}),
@@ -52,6 +56,17 @@ public class TerrainManager {
                 otherOffset = offset;
             }
         }
+    }
+
+    public void GenerateTreasure(Transform parent, Vector3 localPosition) {
+        treasures.Generate(parent, localPosition, new int[]{0,1,2,3});
+    }
+
+    public void GenerateEnemies(Transform parent, Vector3 localPosition, Island island) {
+        EnemyBand band = Object.Instantiate(enemies, parent);
+        band.transform.localPosition = localPosition;
+        band.island = island;
+        band.AddPeople(2);
     }
 
     private TerrainSection getTerrainSection(int type) {

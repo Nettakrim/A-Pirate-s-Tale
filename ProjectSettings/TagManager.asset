@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Bay
+  - Treasure Chest
+  - Enemy Band
   layers:
   - Default
   - TransparentFX

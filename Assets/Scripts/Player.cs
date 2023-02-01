@@ -21,16 +21,19 @@ public class Player : MonoBehaviour
     private bool inShip = true;
 
     [System.NonSerialized] public Transform bay;
+    [SerializeField] private int startingPirates;
 
     // Start is called before the first frame update
     void Start()
     {
-        instance= this;
-        ship.position -= new Vector3(6,0,6);
-        band.position -= new Vector3(6,0,6);
-        cameraT.position -= new Vector3(6,0,6);
+        instance = this;
+        Vector3 offset = new Vector3(GameManager.size/2, 0, GameManager.size/2);
+        ship.position -= offset;
+        band.position -= offset;
+        cameraT.position -= offset;
         shipTarget = ship.position;
         bandTarget = band.position;
+        band.GetComponent<PirateBand>().AddPeople(startingPirates);
     }
 
     float Sign(float f) {
@@ -67,13 +70,13 @@ public class Player : MonoBehaviour
             }
             if (movement != Vector3.zero) {
                 bandTarget = new Vector3(bandTarget.x+movement.x, 1, bandTarget.z+movement.z);
+                if (inShip) {
+                    shipLookDirection = movement;
+                }
                 if (bandTarget == ship.position) {
                     inShip = true;
                 }
                 GameManager.instance.UpdateIslands();
-                if (inShip) {
-                    shipLookDirection = movement;
-                }
             }
             if (inShip) {
                 shipTarget = bandTarget;
@@ -86,6 +89,7 @@ public class Player : MonoBehaviour
         cameraT.position = Vector3.MoveTowards(cameraT.position, band.position, Vector3.Distance(cameraT.position, band.position)*Time.deltaTime*cameraFollowSpeed);
 
         ship.rotation = Quaternion.Lerp(ship.rotation, Quaternion.LookRotation(shipLookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
+        band.rotation = ship.rotation;
     }
 
     public static Vector3 getPosition() {

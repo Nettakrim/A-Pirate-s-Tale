@@ -12,31 +12,32 @@ public class GameManager : MonoBehaviour
     private List<Island> islands = new List<Island>();
     [SerializeField] private Transform islandsParent;
 
+    public static int size = 12;
+
     public void Start() {
         instance = this;
+        UpdateIslands();
         GenerateIsland(Vector3.zero, 7, 7);
     }
 
     public void UpdateIslands() {
-        int s = 12;
-
         Vector3[] offsets = new Vector3[] {
-            new Vector3( 0,0, s),
-            new Vector3( s,0, s),
-            new Vector3( s,0, 0),
-            new Vector3( s,0,-s),
-            new Vector3( 0,0,-s),
-            new Vector3(-s,0,-s),
-            new Vector3(-s,0, 0),
-            new Vector3(-s,0, s)
+            new Vector3( 0,   0, size),
+            new Vector3( size,0, size),
+            new Vector3( size,0, 0),
+            new Vector3( size,0,-size),
+            new Vector3( 0,   0,-size),
+            new Vector3(-size,0,-size),
+            new Vector3(-size,0, 0),
+            new Vector3(-size,0, size)
         };
 
-        int s2 = s*2;
+        int s2 = size*2;
 
         float[] distances = new float[] {s2,s2,s2,s2,s2,s2,s2,s2};
 
         Vector3 playerPos = Player.getPosition();
-        playerPos = new Vector3(Mathf.Round(playerPos.x/s)*s, 0, Mathf.Round(playerPos.z/s)*s);
+        playerPos = new Vector3(Mathf.Round(playerPos.x/size)*size, 0, Mathf.Round(playerPos.z/size)*size);
 
         List<Island> remove = new List<Island>();
 
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
             if (d == -1) {
                 remove.Add(island);
             }
-            if (d < s2+s) {
+            if (d < s2+size) {
                 for (int i = 0; i < 8; i++) {
                     distances[i] = Mathf.Min(
                         Vector3.Distance(playerPos+offsets[i], island.transform.position),
@@ -60,8 +61,8 @@ public class GameManager : MonoBehaviour
         }
 
         for (int i = 0; i < 8; i++) {
-            if (distances[i] >= s) {
-                GenerateIsland(playerPos+offsets[i], s-Random.Range(3,6), s-Random.Range(3,6));
+            if (distances[i] >= size) {
+                GenerateIsland(playerPos+offsets[i], size-Random.Range(3,6), size-Random.Range(3,6));
             }
         }
     }

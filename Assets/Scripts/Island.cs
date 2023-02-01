@@ -6,7 +6,7 @@ public class Island : MonoBehaviour
 {
     [System.NonSerialized] public int sizeX;
     [System.NonSerialized] public int sizeY;
-    private Node[,] nodes;
+    [System.NonSerialized] public Node[,] nodes;
 
     public void Update() {
 
@@ -64,6 +64,10 @@ public class Island : MonoBehaviour
             }
         }
         //print(s);
+        
+        terrainManager.GenerateTreasure(transform, new Vector3(0,0,0));
+
+        terrainManager.GenerateEnemies(transform, new Vector3(0,1,0), this);
     }
 
     public void FloodConnect(int x, int y) {
@@ -158,6 +162,13 @@ public class Island : MonoBehaviour
         return direction%2 == 0 ? new Vector2Int(1-direction,0) : new Vector2Int(0,direction-2);
     }
 
+    public static int getDirectionFromVector(Vector2Int vector) {
+        if (vector.x == 1) return 0;
+        if (vector.y == -1) return 1;
+        if (vector.x == -1) return 2;
+        return 3;
+    }
+
     public int mirrorDirection(int direction, int x, int y) {
         //0 >, 1 v, 2 <, 3 ^
         if (x == sizeX-1 && direction == 0) direction = 2;
@@ -167,7 +178,7 @@ public class Island : MonoBehaviour
         return direction;
     }
 
-    public int getOppositeDirection(int direction) {
+    public static int getOppositeDirection(int direction) {
         return (direction+2)%4;
     }
 
