@@ -8,8 +8,20 @@ public class Island : MonoBehaviour
     [System.NonSerialized] public int sizeY;
     [System.NonSerialized] public Node[,] nodes;
 
-    public void Update() {
+    [System.NonSerialized] public List<EnemyBand> enemies = new List<EnemyBand>();
 
+    public void EnterIsland(PirateBand player) {
+        foreach (EnemyBand enemyBand in enemies) {
+            enemyBand.targetParents.Add(player.transform);
+            player.targetParents.Add(enemyBand.transform);
+        }
+    }
+
+    public void ExitIsland(PirateBand player) {
+        foreach (EnemyBand enemyBand in enemies) {
+            enemyBand.targetParents.Clear();
+        }
+        player.targetParents.Clear();
     }
 
     public float UpdateActive() {

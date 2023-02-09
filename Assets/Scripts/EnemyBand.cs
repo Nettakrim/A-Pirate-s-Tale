@@ -18,7 +18,8 @@ public class EnemyBand : Group
         movementTarget = transform.localPosition;
     }
 
-    private void Update() {
+    protected override void Update() {
+        base.Update();
         float distance = (transform.localPosition-movementTarget).magnitude;
         if ((distance < 0.1f)) {
             Vector3 islandPosition = transform.localPosition+new Vector3((island.sizeX-1)/2,0,(island.sizeY-1)/2);
@@ -81,5 +82,14 @@ public class EnemyBand : Group
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, movementTarget, Time.deltaTime*walkSpeed);
 
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
+    }
+
+    protected override void DistanceBehaviour(float distance, Transform child, Transform target) {
+        if (distance < 0.1) {
+            Player.instance.pirateBand.ScheduleLayoutUpdate(1);
+            ScheduleLayoutUpdate(1);
+            Destroy(child.gameObject);
+            Destroy(target.gameObject);
+        }
     }
 }

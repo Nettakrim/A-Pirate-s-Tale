@@ -7,33 +7,53 @@ public class Group : MonoBehaviour
     private Layout layout;
 
     [SerializeField] private float localFollowSpeed;
-    [System.NonSerialized] public Transform targetParent;
+    [System.NonSerialized] public List<Transform> targetParents = new List<Transform>();
 
     [SerializeField] private GameObject prefab;
 
-    private void Update() {
-        for (int i = 0; i < layout.amount; i++) {
+    private float updateLayoutAt;
+    private bool needsUpdate;
+
+    protected virtual void Update() {
+        if (needsUpdate && updateLayoutAt - Time.time <= 0) {
+            SetLayout(transform.childCount);
+            needsUpdate = false;
+        }
+
+        Quaternion rotation = Quaternion.Inverse(transform.rotation);
+        for (int i = 0; i < transform.childCount; i++) {
             Transform child = transform.GetChild(i);
             Vector3 target = layout.getPosition(i);
-            if (targetParent != null) {
+            Vector3 worldTarget = transform.position+(rotation*target);
+            if (targetParents.Count != 0) {
                 float closestDistance = 1;
                 Transform closestTarget = null;
-                foreach (Transform targetChild in targetParent) {
-                    float distance = Vector3.Distance(child.position, targetChild.position);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestTarget = targetChild;
+                foreach (Transform targetParent in targetParents) {
+                    bool pass = false;
+                    if (pass) continue;
+                    foreach (Transform targetChild in targetParent) {
+                        float distance = Vector3.Distance(worldTarget, targetChild.position);
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestTarget = targetChild;
+                        } else if (distance > 2) {
+                            //if distance is more than 2 then theres no way anything else in the band will be close enough
+                            pass = true;
+                        }
                     }
                 }
-                if (closestDistance < 1) {
-                    target = Vector3.Lerp(target, closestTarget.position, 1-closestDistance);
+                if (closestDistance < 0.5f) {
+                    float lerp = 1-(closestDistance*2);
+                    target = Vector3.Lerp(target, (rotation*(closestTarget.position-child.position)+child.localPosition), lerp);
                 }
-                if (closestDistance < 0.1) {
-                    Debug.Log("kill!");
-                }
+                DistanceBehaviour(closestDistance, child, closestTarget);
             }
             child.localPosition = Vector3.MoveTowards(child.localPosition, target, localFollowSpeed*Time.deltaTime);
         }
+    }
+
+    protected virtual void DistanceBehaviour(float distance, Transform child, Transform target) {
+
     }
 
     public void AddPeople(int add) {
@@ -44,8 +64,21 @@ public class Group : MonoBehaviour
         }
     }
 
+    public void KillRandom(int amount) {
+        int children = transform.childCount;
+        for (int i = 0; i < amount; i++) {
+            Destroy(transform.GetChild(Random.Range(0,children-i)).gameObject);
+        }
+        ScheduleLayoutUpdate(0.5f);
+    }
+
     public int getSize() {
         return layout.amount;
+    }
+
+    public void ScheduleLayoutUpdate(float inSeconds) {
+        updateLayoutAt = Mathf.Max(Time.time + inSeconds, updateLayoutAt);
+        needsUpdate = true;
     }
 
     public void SetLayout(int amount) {

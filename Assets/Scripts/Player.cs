@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
     [System.NonSerialized] public Transform bay;
     [SerializeField] private int startingPirates;
 
+    [System.NonSerialized] public PirateBand pirateBand;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +35,8 @@ public class Player : MonoBehaviour
         cameraT.position -= offset;
         shipTarget = ship.position;
         bandTarget = band.position;
-        band.GetComponent<PirateBand>().AddPeople(startingPirates);
+        pirateBand = band.GetComponent<PirateBand>();
+        pirateBand.AddPeople(startingPirates);
     }
 
     float Sign(float f) {
@@ -50,6 +53,7 @@ public class Player : MonoBehaviour
         if ((distance < 0.1f) || ((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0))) {
             if (inShip && bay != null && -bay.right == new Vector3(x,0,z)) {
                 inShip = false;
+                bay.parent.GetComponent<Island>().EnterIsland(pirateBand);
             }
             Vector3 offset = inShip ? new Vector3(0,-0.125f,0) : new Vector3(0,0.125f,0);
             if (Physics.Raycast(bandTarget + offset, new Vector3(x,0,0), 1)) {
@@ -73,7 +77,8 @@ public class Player : MonoBehaviour
                 if (inShip) {
                     shipLookDirection = movement;
                 }
-                if (bandTarget == ship.position) {
+                else if (bandTarget == ship.position) {
+                    bay.parent.GetComponent<Island>().ExitIsland(pirateBand);
                     inShip = true;
                 }
                 GameManager.instance.UpdateIslands();

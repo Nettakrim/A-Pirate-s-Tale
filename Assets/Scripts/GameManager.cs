@@ -12,12 +12,29 @@ public class GameManager : MonoBehaviour
     private List<Island> islands = new List<Island>();
     [SerializeField] private Transform islandsParent;
 
+    [SerializeField] private EnemyShip enemyShipPrefab;
+
     public static int size = 12;
 
     public void Start() {
         instance = this;
         UpdateIslands();
         GenerateIsland(Vector3.zero, 7, 7);
+        EnemyShip.ships = 0;
+    }
+
+    private void Update() {
+        if (EnemyShip.ships < 5) {
+            GenerateShip();
+        }
+    }
+
+    private void GenerateShip() {
+        Vector3 playerPos = Player.getPosition();
+        playerPos = new Vector3(Mathf.Round(playerPos.x/size)*size, 1, Mathf.Round(playerPos.z/size)*size);
+        Vector3 offset = (Quaternion.Euler(0,Random.Range(0f,360f),0) * Vector3.forward)*20;
+        offset = new Vector3(Mathf.Round(offset.x/size)*size, 0, Mathf.Round(offset.z/size)*size);
+        Instantiate(enemyShipPrefab, playerPos+offset, Quaternion.identity);
     }
 
     public void UpdateIslands() {

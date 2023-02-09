@@ -8,11 +8,11 @@ public class Ship : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (other.tag == "Bay") {
-            player.bay = other.transform;
+            player.bay = other.transform.parent;
         }
     }
 
     private void OnTriggerExit(Collider other) {
-        if (other.transform == player.bay) player.bay = null;        
+        if (other.transform.parent == player.bay) player.bay = null;        
     }
 }

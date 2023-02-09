@@ -67,6 +67,7 @@ public class TerrainManager {
         band.transform.localPosition = localPosition;
         band.island = island;
         band.AddPeople(amount);
+        island.enemies.Add(band);
     }
 
     private TerrainSection getTerrainSection(int type) {

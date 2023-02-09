@@ -7,6 +7,7 @@ TagManager:
   - Bay
   - Treasure Chest
   - Enemy Band
+  - Enemy Ship
   layers:
   - Default
   - TransparentFX
