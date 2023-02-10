@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     private Vector3 bandTarget;
     private Vector3 lastMovement;
     private Vector3 shipLookDirection = Vector3.forward;
+    private Vector3 bandLookDirection = Vector3.forward;
     [SerializeField] private Transform cameraT;
 
     private bool inShip = true;
@@ -81,6 +82,7 @@ public class Player : MonoBehaviour
                     bay.parent.GetComponent<Island>().ExitIsland(pirateBand);
                     inShip = true;
                 }
+                bandLookDirection = movement;
                 GameManager.instance.UpdateIslands();
             }
             if (inShip) {
@@ -94,7 +96,7 @@ public class Player : MonoBehaviour
         cameraT.position = Vector3.MoveTowards(cameraT.position, band.position, Vector3.Distance(cameraT.position, band.position)*Time.deltaTime*cameraFollowSpeed);
 
         ship.rotation = Quaternion.Lerp(ship.rotation, Quaternion.LookRotation(shipLookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
-        band.rotation = ship.rotation;
+        band.rotation = Quaternion.Lerp(band.rotation, Quaternion.LookRotation(bandLookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
     }
 
     public static Vector3 getPosition() {

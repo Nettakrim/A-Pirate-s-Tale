@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Rock
+  m_Name: BookCover
   m_Shader: {fileID: -6465566751694194690, guid: 6869f3f2eefe4d340851b54566ab6297, type: 3}
-  m_ShaderKeywords: _RECEIVE_SHADOWS_OFF
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -93,12 +93,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_18d8b31dede6497baf9bc1e33eec5b1a: 0
-    - Vector1_1b97c0f59d25447a9b63e2b637a1c8d5: 0.55
+    - Vector1_1b97c0f59d25447a9b63e2b637a1c8d5: 0
     - Vector1_2647e096aa6043d0bf3d98a405ecedda: 1
     - Vector1_4a13a3d9f46d41208fbee04ba558c530: 1.77
-    - Vector1_8e8b65ab71794d48b46cebfcf9223be8: 0
-    - Vector1_d47fecb105a543328dfc487b93336f80: 0
+    - Vector1_8e8b65ab71794d48b46cebfcf9223be8: 1
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -126,11 +124,8 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_4b2cfa79fbf34512bf311b6bde77f338: {r: 0.6544589, g: 0.7264151, b: 0.6573371, a: 1}
-    - Color_687576b2472b41e5b1b7c054969fed02: {r: 0.8666667, g: 0.8509804, b: 0.77254903, a: 1}
-    - Color_c8cdff88016946679991cedefecb2d87: {r: 0, g: 0, b: 0, a: 0}
-    - Vector2_9e2c7f98e0014795bfc940091cc91a75: {r: 7, g: 5, b: 0, a: 0}
-    - Vector3_16040433d5dd4a65a68d2ba834cd15a6: {r: 6, g: 5, b: 0, a: 0}
+    - Color_4b2cfa79fbf34512bf311b6bde77f338: {r: 0.5660378, g: 0.3864347, b: 0.35510862, a: 1}
+    - Vector2_9e2c7f98e0014795bfc940091cc91a75: {r: 0, g: 0, b: 0, a: 0}
     - Vector3_993b6467be4d40e2966eec8d7171ea4f: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

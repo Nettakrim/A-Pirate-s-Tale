@@ -66,6 +66,7 @@ public class Group : MonoBehaviour
 
     public void KillRandom(int amount) {
         int children = transform.childCount;
+        amount = Mathf.Min(amount, children);
         for (int i = 0; i < amount; i++) {
             Destroy(transform.GetChild(Random.Range(0,children-i)).gameObject);
         }
