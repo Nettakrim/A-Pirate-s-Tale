@@ -64,11 +64,12 @@ public class TerrainManager : ScriptableObject {
         treasures.Generate(parent, localPosition, new int[]{0,1,2,3});
     }
 
-    public void GenerateEnemies(Transform parent, Vector3 localPosition, Island island, int amount) {
+    public void GenerateEnemies(Transform parent, Vector3 localPosition, Island island, int amount, EnemyBand.Target targetType) {
         EnemyBand band = Object.Instantiate(enemies, parent);
         band.transform.localPosition = localPosition;
         band.island = island;
         band.AddPeople(amount);
+        band.targetType = targetType;
         island.enemies.Add(band);
     }
 

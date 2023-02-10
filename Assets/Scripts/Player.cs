@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
         float z = Sign(Input.GetAxis("Vertical"));
         float distance = (band.position-bandTarget).magnitude;
         if ((distance < 0.1f) || ((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0))) {
-            if (inShip && bay != null && -bay.right == new Vector3(x,0,z)) {
+            if (inShip && bay != null && bandTarget-bay.position == Vector3.up && -bay.right == new Vector3(x,0,z)) {
                 inShip = false;
                 bay.parent.GetComponent<Island>().EnterIsland(pirateBand);
             }

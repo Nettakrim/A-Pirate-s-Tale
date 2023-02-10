@@ -10,6 +10,8 @@ public class Island : MonoBehaviour
 
     [System.NonSerialized] public List<EnemyBand> enemies = new List<EnemyBand>();
 
+    [System.NonSerialized] public int difficulty;
+
     public void EnterIsland(PirateBand player) {
         foreach (EnemyBand enemyBand in enemies) {
             enemyBand.targetParents.Add(player.transform);
@@ -84,6 +86,8 @@ public class Island : MonoBehaviour
 
             AddEnemies(terrainManager);
         }
+
+        difficulty = terrainManager.mazeDifficulty;
     }
 
     public void FloodConnect(int x, int y) {
@@ -161,9 +165,17 @@ public class Island : MonoBehaviour
     }
 
     public void AddEnemies(TerrainManager terrainManager) {
+        EnemyBand.Target[] targets = new EnemyBand.Target[3];
+        int defender = Random.Range(0,3);
+        targets[defender] = EnemyBand.Target.Treasure;
+        int chaser = (defender + Random.Range(1,3))%3;
+        targets[chaser] = EnemyBand.Target.Player;
+        int trapper = 3-(defender+chaser);
+        targets[trapper] = EnemyBand.Target.Ship;
+
         for (int i = 3; i < 6; i++) {
             Vector3 pos = new Vector3(Random.Range(0,sizeX), 1, Random.Range(0,sizeY)) - new Vector3((sizeX-1)/2, 0, (sizeY-1)/2);
-            terrainManager.GenerateEnemies(transform, pos, this, i);
+            terrainManager.GenerateEnemies(transform, pos, this, i, targets[i-3]);
         }
     }
 
@@ -242,6 +254,10 @@ public class Island : MonoBehaviour
 
         public int GetConnections() {
             return (connections[0]?1:0)+(connections[1]?1:0)*2+(connections[2]?1:0)*4+(connections[3]?1:0)*8;
+        }
+
+        public int GetNumberOfExits() {
+            return (connections[0]?1:0)+(connections[1]?1:0)+(connections[2]?1:0)+(connections[3]?1:0);
         }
     }
 }

@@ -14,6 +14,10 @@ public class EnemyBand : Group
     [SerializeField] private float walkSpeed;
     [SerializeField] private float rotateSpeed;
 
+    [System.NonSerialized] public float playerDistance;
+
+    [System.NonSerialized] public Target targetType;
+
     private void Start() {
         movementTarget = transform.localPosition;
     }
@@ -28,23 +32,57 @@ public class EnemyBand : Group
 
             Island.Node node = island.nodes[pos.x, pos.y];
 
-            Vector3 playerOffset = Player.getPosition() - transform.position;
-            int playerDirection;
-
-            if (Mathf.Abs(playerOffset.x) > Mathf.Abs(playerOffset.z)) {
-                playerDirection = Island.getDirectionFromVector(new Vector2Int((int)Mathf.Sign(playerOffset.x),0));
+            Vector3 targetPos;
+            if (targetParents.Count != 0) {
+                switch (targetType) {
+                    case (Target.Player):
+                        targetPos = Player.getPosition();
+                        break;
+                    case (Target.Treasure):
+                        targetPos = transform.parent.position;
+                        break;
+                    case (Target.Ship):
+                        targetPos = Player.instance.bay.position;
+                        break;
+                    default:
+                        targetPos = Vector3.zero;
+                        break;
+                }
             } else {
-                playerDirection = Island.getDirectionFromVector(new Vector2Int(0,(int)Mathf.Sign(playerOffset.z)));
+                targetPos = transform.parent.position;
             }
-            playerDirection = (playerDirection + (4-Mathf.RoundToInt(island.transform.rotation.eulerAngles.y/90)))%4;
+
+            Vector3 targetOffset = targetPos - transform.position;
+            int targetDirection;
+
+            if (Mathf.Abs(targetOffset.x) > Mathf.Abs(targetOffset.z)) {
+                targetDirection = Island.getDirectionFromVector(new Vector2Int((int)Mathf.Sign(targetOffset.x),0));
+            } else {
+                targetDirection = Island.getDirectionFromVector(new Vector2Int(0,(int)Mathf.Sign(targetOffset.z)));
+            }
+            targetDirection = (targetDirection + (4-Mathf.RoundToInt(island.transform.rotation.eulerAngles.y/90)))%4;
+
+            Vector3 playerOffset = Player.getPosition() - transform.position;
+            playerDistance = Mathf.Abs(playerOffset.x)+Mathf.Abs(playerOffset.z);
+
+            if (island.difficulty == 0 && playerDistance <= 4.5) {
+                //if another enemy is near player lay off on your target
+                foreach (EnemyBand enemyBand in island.enemies) {
+                    if (enemyBand != this && enemyBand.playerDistance <= 2.5) {
+                        targetDirection = Island.getOppositeDirection(targetDirection);
+                        break;
+                    }
+                }
+            }
 
             Vector2Int intMovement = lastIntMovement;
+
             int direction = Island.getDirectionFromVector(intMovement);
-            bool allowFlip = !node.HasConnection(direction) || direction == Island.getOppositeDirection(playerDirection);
-            if (allowFlip || direction != playerDirection || Random.value < 0.333f) {
+            bool allowFlip = !node.HasConnection(direction) || direction == Island.getOppositeDirection(targetDirection);
+            if (allowFlip || direction != targetDirection || Random.value < 0.333f) {
                 int a1 = (direction+1)%4;
                 int a2 = (direction+3)%4;
-                int adjacent = a1 == playerDirection ? a1 : (a2 == playerDirection ? a2 : (Random.Range(0,2) == 0 ? a1 : a2));
+                int adjacent = a1 == targetDirection ? a1 : (a2 == targetDirection ? a2 : (Random.Range(0,2) == 0 ? a1 : a2));
                 int oppositeAdjacent = Island.getOppositeDirection(adjacent);
                 int oppositeDirection = Island.getOppositeDirection(direction);
                 if (node.HasConnection(adjacent)) {
@@ -55,6 +93,16 @@ public class EnemyBand : Group
                     direction = oppositeDirection;
                 }
             }
+
+            //try to avoid chasing the player into a dead end
+            if (playerDistance <= 1.5 && island.difficulty <= 1) {
+                Vector2Int offset = new Vector2Int(Mathf.RoundToInt(playerOffset.x), Mathf.RoundToInt(playerOffset.z));
+                int d = Island.getDirectionFromVector(offset);
+                if (node.HasConnection(d) && island.nodes[pos.x + offset.x, pos.y + offset.y].GetNumberOfExits() == 1) {
+                    direction = Island.getOppositeDirection(d);
+                }
+            }
+
             direction = island.mirrorDirection(direction, pos.x, pos.y);
 
             //bays may cause this
@@ -91,5 +139,11 @@ public class EnemyBand : Group
             Destroy(child.gameObject);
             Destroy(target.gameObject);
         }
+    }
+
+    public enum Target {
+        Player,
+        Treasure,
+        Ship
     }
 }

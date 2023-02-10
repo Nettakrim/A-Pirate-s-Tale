@@ -508,7 +508,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "2368c85050464254aee008863df8406f",
     "m_Id": 0,
-    "m_DisplayName": "CollapseScale",
+    "m_DisplayName": "CollapseTo",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
