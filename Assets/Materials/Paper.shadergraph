@@ -1063,7 +1063,7 @@
     "m_Guid": {
         "m_GuidSerialized": "bfe75e44-ac59-4091-8d7f-07c7317b2932"
     },
-    "m_Name": "CollapseScale",
+    "m_Name": "CollapseTo",
     "m_DefaultReferenceName": "Vector1_8e8b65ab71794d48b46cebfcf9223be8",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,

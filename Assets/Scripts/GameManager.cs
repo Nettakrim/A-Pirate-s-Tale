@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [SerializeField] private TerrainManager terrainManager;
+    [SerializeField] private TerrainManager[] terrainManagers;
     [SerializeField] private Island islandPrefab;
 
     private List<Island> islands = new List<Island>();
@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
         Island island = Instantiate(islandPrefab, position, Quaternion.identity, islandsParent);
         island.sizeX = sizeX;
         island.sizeY = sizeY;
-        island.Generate(terrainManager);
+        island.Generate(terrainManagers[Random.Range(0,terrainManagers.Length)]);
         island.transform.rotation = Quaternion.Euler(0,Random.Range(0,4)*90,0);
         islands.Add(island);
     }

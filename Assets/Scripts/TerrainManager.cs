@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class TerrainManager {
+[System.Serializable] [CreateAssetMenu]
+public class TerrainManager : ScriptableObject {
     [SerializeField] private TerrainSection emptys; //  
     [SerializeField] private TerrainSection deadEnds; // ╶
     [SerializeField] private TerrainSection bends; // ┌
@@ -18,6 +18,8 @@ public class TerrainManager {
     [SerializeField] private TerrainSection treasures;
 
     [SerializeField] private EnemyBand enemies;
+
+    [SerializeField] public int mazeDifficulty;
 
     private static PathConnection[] connectionCombinations = new PathConnection[] {
         new PathConnection(0, new int[]{0,1,2,3}),

@@ -51,21 +51,23 @@ public class Island : MonoBehaviour
             }
         }
 
-        for (int x = 0; x<sizeX; x++) {
-            for (int y = 0; y<sizeY; y++) {
-                int direction = Random.Range(0,4);
-                direction = mirrorDirection(direction, x, y);
-                Connect(x,y,direction);
+        if (terrainManager.mazeDifficulty != -1) {
+            for (int x = 0; x<sizeX; x++) {
+                for (int y = 0; y<sizeY; y++) {
+                    int direction = Random.Range(0,4);
+                    direction = mirrorDirection(direction, x, y);
+                    Connect(x,y,direction);
+                }
             }
+
+            FloodConnect((sizeX-1)/2, (sizeY-1)/2);
+
+            ConnectRemaining();
+
+            RemoveSmallLoops();
         }
 
-        FloodConnect((sizeX-1)/2, (sizeY-1)/2);
-
-        ConnectRemaining();
-
-        RemoveSmallLoops();
-
-        AddBays();  
+        AddBays();
 
         //string s = "";
         for (int x = 0; x<sizeX; x++) {
@@ -77,9 +79,11 @@ public class Island : MonoBehaviour
         }
         //print(s);
         
-        terrainManager.GenerateTreasure(transform, new Vector3(0,0,0));
+        if (terrainManager.mazeDifficulty != -1) {
+            terrainManager.GenerateTreasure(transform, new Vector3(0,0,0));
 
-        AddEnemies(terrainManager);
+            AddEnemies(terrainManager);
+        }
     }
 
     public void FloodConnect(int x, int y) {
