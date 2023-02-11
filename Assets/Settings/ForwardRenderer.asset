@@ -96,7 +96,8 @@ MonoBehaviour:
   - {fileID: 1506326890975558779}
   - {fileID: 6834407175755644488}
   - {fileID: -7506834584644393108}
-  m_RendererFeatureMap: 0b2671381273d61a7d123e59462530a27b7c3794538ce71448be4bb91db1d85e6c67a7dab75dd297
+  - {fileID: 2427657286412781729}
+  m_RendererFeatureMap: 0b2671381273d61a7d123e59462530a27b7c3794538ce71448be4bb91db1d85e6c67a7dab75dd297a1c8059170c5b021
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
@@ -114,7 +115,7 @@ MonoBehaviour:
     m_Bits: 23
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 151
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
@@ -194,6 +195,45 @@ MonoBehaviour:
     stencilSettings:
       overrideStencilState: 1
       stencilReference: 2
+      stencilCompareFunction: 6
+      passOperation: 0
+      failOperation: 0
+      zFailOperation: 0
+    cameraSettings:
+      overrideCamera: 0
+      restoreCamera: 1
+      offset: {x: 0, y: 0, z: 0, w: 0}
+      cameraFieldOfView: 60
+--- !u!114 &2427657286412781729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
+  m_Name: UI
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    passTag: UI
+    Event: 500
+    filterSettings:
+      RenderQueueType: 1
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 32
+      PassNames: []
+    overrideMaterial: {fileID: 0}
+    overrideMaterialPassIndex: 0
+    overrideDepthState: 0
+    depthCompareFunction: 4
+    enableWrite: 1
+    stencilSettings:
+      overrideStencilState: 1
+      stencilReference: 0
       stencilCompareFunction: 6
       passOperation: 0
       failOperation: 0

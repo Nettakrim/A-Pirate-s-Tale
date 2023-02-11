@@ -27,24 +27,43 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Text scoreText;
     [SerializeField] private Text timerText;
+    [SerializeField] private Transform canvas;
 
     private int score;
 
-    private float timerStartedAt;
+    private float endAtTime;
+
+    public static bool hasStarted;
+
+    public static int difficulty;
+
+    [SerializeField] private float gameLength;
 
     public void Start() {
         instance = this;
         Time.timeScale = 0;
+        hasStarted = false;
+        SetTimer(Mathf.CeilToInt(gameLength));
     }
 
-    public void Play() {
+    public void Play(int gameDifficulty) {
         UpdateIslands();
-        GenerateIsland(Vector3.zero, 7, 7);
+        GenerateIsland(Vector3.zero, size-Random.Range(3,6), size-Random.Range(3,6));
         EnemyShip.ships = 0;
+        bookDecoration.mesh = bookDecorations[1];
+        playing = true;
+        bookAnimation.SetTrigger("EnterWorld");
+        difficulty = gameDifficulty;
+        endAtTime = Time.time + gameLength;
+        hasStarted = true;
+    }
+
+    public void MainMenu() {
+        SceneManager.LoadScene(0);
     }
 
     public void Quit() {
-        SceneManager.LoadScene(0);
+        Application.Quit();
     }
 
     private void Update() {
@@ -59,10 +78,20 @@ public class GameManager : MonoBehaviour
 
             if (Time.timeScale < 1) {
                 Time.timeScale = Mathf.Clamp01(Time.timeScale + (1-Time.timeScale)*Time.unscaledDeltaTime*8);
+                if (Time.timeScale > 0.999f) Time.timeScale = 1;
+                if (Time.timeScale == 1) {
+                    canvas.GetChild(1).gameObject.SetActive(false);
+                }
+            }
+
+            if (SetTimer(Mathf.CeilToInt(endAtTime - Time.time)) <= 0) {
+                Debug.Log("WINNN");
+                playing = false;
             }
         } else {
             if (Time.timeScale > 0) {
                 Time.timeScale = Mathf.Clamp01(Time.timeScale - (Time.timeScale)*Time.unscaledDeltaTime*8);
+                if (Time.timeScale < 0.0001f) Time.timeScale = 0;
             }
         }
     }
@@ -132,19 +161,29 @@ public class GameManager : MonoBehaviour
     }
 
     public void TogglePause() {
+        if (!hasStarted) return;
+
+        canvas.GetChild(0).gameObject.SetActive(false);
+        canvas.GetChild(1).gameObject.SetActive(true);
         if (!playing) {
             bookAnimation.SetTrigger("EnterWorld");
-            bookDecoration.mesh = bookDecorations[0];
+            bookDecoration.mesh = bookDecorations[1];
             playing = true;
         } else {
             bookAnimation.SetTrigger("EnterMain");
-            bookDecoration.mesh = bookDecorations[1];
+            bookDecoration.mesh = bookDecorations[2];
             playing = false;
         }
+        Player.instance.canMouseMove = false;
     }
 
     public void AddToScore() {
         score++;
         scoreText.text = score.ToString();
+    }
+
+    private int SetTimer(int secondsLeft) {
+        timerText.text = (secondsLeft/60)+":"+(secondsLeft%60).ToString().PadLeft(2,'0');
+        return secondsLeft;
     }
 }

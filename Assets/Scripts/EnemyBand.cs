@@ -65,7 +65,7 @@ public class EnemyBand : Group
             Vector3 playerOffset = Player.getPosition() - transform.position;
             playerDistance = Mathf.Abs(playerOffset.x)+Mathf.Abs(playerOffset.z);
 
-            if (island.difficulty == 0 && playerDistance <= 4.5) {
+            if (island.islandDifficulty <= 1 && playerDistance <= 4.5) {
                 //if another enemy is near player lay off on your target
                 foreach (EnemyBand enemyBand in island.enemies) {
                     if (enemyBand != this && enemyBand.playerDistance <= 2.5) {
@@ -95,7 +95,7 @@ public class EnemyBand : Group
             }
 
             //try to avoid chasing the player into a dead end
-            if (playerDistance <= 1.5 && island.difficulty <= 1) {
+            if (playerDistance <= 1.5 && island.islandDifficulty <= 2) {
                 Vector2Int offset = new Vector2Int(Mathf.RoundToInt(playerOffset.x), Mathf.RoundToInt(playerOffset.z));
                 int d = Island.getDirectionFromVector(offset);
                 if (node.HasConnection(d) && island.nodes[pos.x + offset.x, pos.y + offset.y].GetNumberOfExits() == 1) {

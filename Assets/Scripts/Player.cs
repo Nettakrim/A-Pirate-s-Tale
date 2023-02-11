@@ -26,6 +26,8 @@ public class Player : MonoBehaviour
 
     [System.NonSerialized] public PirateBand pirateBand;
 
+    [System.NonSerialized] public bool canMouseMove;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,17 +50,21 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.hasStarted) return;
         float x = Sign(Input.GetAxis("Horizontal"));
         float z = Sign(Input.GetAxis("Vertical"));
-        if (Input.GetMouseButton(0) && x == 0 && z == 0) {
-            Vector3 mouseOffset = Camera.main.ScreenToViewportPoint(Input.mousePosition)-new Vector3(0.5f,0.65f);
+        if (canMouseMove && Input.GetMouseButton(0) && x == 0 && z == 0) {
+            Vector3 mouseOffset = Camera.main.ScreenToViewportPoint(Input.mousePosition)-new Vector3(0.5f,0.63f);
             mouseOffset = new Vector3((mouseOffset.x/Screen.height)*Screen.width, mouseOffset.y, 0);
-            if (mouseOffset.magnitude > 0.075f) {
+            float mag = mouseOffset.magnitude;
+            if (mag > 0.075f && mag < 0.6f) {
                 mouseOffset.Normalize();
                 x = Sign(Mathf.Round(mouseOffset.x));
                 z = Sign(Mathf.Round(mouseOffset.y));
             }
         }
+        if (!canMouseMove && Input.GetMouseButtonUp(0) && GameManager.playing) canMouseMove = true;
+
         float distance = (band.position-bandTarget).magnitude;
         if ((distance < 0.1f) || ((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0))) {
             if (inShip && bay != null && bandTarget-bay.position == Vector3.up && -bay.right == new Vector3(x,0,z)) {

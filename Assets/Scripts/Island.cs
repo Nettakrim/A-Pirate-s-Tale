@@ -10,7 +10,7 @@ public class Island : MonoBehaviour
 
     [System.NonSerialized] public List<EnemyBand> enemies = new List<EnemyBand>();
 
-    [System.NonSerialized] public int difficulty;
+    [System.NonSerialized] public int islandDifficulty;
 
     public void EnterIsland(PirateBand player) {
         foreach (EnemyBand enemyBand in enemies) {
@@ -45,6 +45,8 @@ public class Island : MonoBehaviour
     }
 
     public void Generate(TerrainManager terrainManager) {
+        islandDifficulty = GameManager.difficulty * terrainManager.mazeDifficulty;
+
         nodes = new Node[sizeX,sizeY];
         for (int x = 0; x<sizeX; x++) {
             for (int y = 0; y<sizeY; y++) {
@@ -53,7 +55,7 @@ public class Island : MonoBehaviour
             }
         }
 
-        if (terrainManager.mazeDifficulty != -1) {
+        if (terrainManager.mazeDifficulty != 0) {
             for (int x = 0; x<sizeX; x++) {
                 for (int y = 0; y<sizeY; y++) {
                     int direction = Random.Range(0,4);
@@ -81,13 +83,11 @@ public class Island : MonoBehaviour
         }
         //print(s);
         
-        if (terrainManager.mazeDifficulty != -1) {
+        if (terrainManager.mazeDifficulty != 0) {
             terrainManager.GenerateTreasure(transform, new Vector3(0,0,0));
 
             AddEnemies(terrainManager);
         }
-
-        difficulty = terrainManager.mazeDifficulty;
     }
 
     public void FloodConnect(int x, int y) {

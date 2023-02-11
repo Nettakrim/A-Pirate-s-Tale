@@ -46,4 +46,4 @@ MonoBehaviour:
     variations:
     - {fileID: 2537148328925017626, guid: a74ad1187d0a50146826cf9456be9250, type: 3}
   enemies: {fileID: 3487177022428174528, guid: 464adaa955ea4b449b181908f947c965, type: 3}
-  mazeDifficulty: -1
+  mazeDifficulty: 0
