@@ -50,6 +50,15 @@ public class Player : MonoBehaviour
     {
         float x = Sign(Input.GetAxis("Horizontal"));
         float z = Sign(Input.GetAxis("Vertical"));
+        if (Input.GetMouseButton(0) && x == 0 && z == 0) {
+            Vector3 mouseOffset = Camera.main.ScreenToViewportPoint(Input.mousePosition)-new Vector3(0.5f,0.65f);
+            mouseOffset = new Vector3((mouseOffset.x/Screen.height)*Screen.width, mouseOffset.y, 0);
+            if (mouseOffset.magnitude > 0.075f) {
+                mouseOffset.Normalize();
+                x = Sign(Mathf.Round(mouseOffset.x));
+                z = Sign(Mathf.Round(mouseOffset.y));
+            }
+        }
         float distance = (band.position-bandTarget).magnitude;
         if ((distance < 0.1f) || ((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0))) {
             if (inShip && bay != null && bandTarget-bay.position == Vector3.up && -bay.right == new Vector3(x,0,z)) {

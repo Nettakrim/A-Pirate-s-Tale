@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,18 +16,54 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private EnemyShip enemyShipPrefab;
 
+    [SerializeField] private Animator bookAnimation;
+
+    public static bool playing;
+
     public static int size = 12;
+
+    [SerializeField] private Mesh[] bookDecorations;
+    [SerializeField] private MeshFilter bookDecoration;
+
+    [SerializeField] private Text scoreText;
+    [SerializeField] private Text timerText;
+
+    private int score;
+
+    private float timerStartedAt;
 
     public void Start() {
         instance = this;
+        Time.timeScale = 0;
+    }
+
+    public void Play() {
         UpdateIslands();
         GenerateIsland(Vector3.zero, 7, 7);
         EnemyShip.ships = 0;
     }
 
+    public void Quit() {
+        SceneManager.LoadScene(0);
+    }
+
     private void Update() {
-        if (EnemyShip.ships < 5) {
-            GenerateShip();
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton7)) {
+            TogglePause();
+        }
+
+        if (playing) {
+            if (EnemyShip.ships < 5) {
+                GenerateShip();
+            }
+
+            if (Time.timeScale < 1) {
+                Time.timeScale = Mathf.Clamp01(Time.timeScale + (1-Time.timeScale)*Time.unscaledDeltaTime*8);
+            }
+        } else {
+            if (Time.timeScale > 0) {
+                Time.timeScale = Mathf.Clamp01(Time.timeScale - (Time.timeScale)*Time.unscaledDeltaTime*8);
+            }
         }
     }
 
@@ -34,7 +72,7 @@ public class GameManager : MonoBehaviour
         playerPos = new Vector3(Mathf.Round(playerPos.x/size)*size, 1, Mathf.Round(playerPos.z/size)*size);
         Vector3 offset = (Quaternion.Euler(0,Random.Range(0f,360f),0) * Vector3.forward)*20;
         offset = new Vector3(Mathf.Round(offset.x/size)*size, 0, Mathf.Round(offset.z/size)*size);
-        Instantiate(enemyShipPrefab, playerPos+offset, Quaternion.identity);
+        Instantiate(enemyShipPrefab, playerPos+offset, Quaternion.identity, islandsParent);
     }
 
     public void UpdateIslands() {
@@ -91,5 +129,22 @@ public class GameManager : MonoBehaviour
         island.Generate(terrainManagers[Random.Range(0,terrainManagers.Length)]);
         island.transform.rotation = Quaternion.Euler(0,Random.Range(0,4)*90,0);
         islands.Add(island);
+    }
+
+    public void TogglePause() {
+        if (!playing) {
+            bookAnimation.SetTrigger("EnterWorld");
+            bookDecoration.mesh = bookDecorations[0];
+            playing = true;
+        } else {
+            bookAnimation.SetTrigger("EnterMain");
+            bookDecoration.mesh = bookDecorations[1];
+            playing = false;
+        }
+    }
+
+    public void AddToScore() {
+        score++;
+        scoreText.text = score.ToString();
     }
 }
