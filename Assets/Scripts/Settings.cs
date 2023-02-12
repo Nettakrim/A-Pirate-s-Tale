@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.Events;
 
 public class Settings : MonoBehaviour
 {
@@ -12,8 +13,8 @@ public class Settings : MonoBehaviour
     public static KeyCodeData down  = new KeyCodeData("down", KeyCode.S);
     public static KeyCodeData right = new KeyCodeData("right", KeyCode.D);
 
-    public static BoolData compass      = new BoolData("compass", false);
-    public static BoolData dangerSensor = new BoolData("dangersensor", false);
+    public static BoolData compass      = new BoolData("compass", false, new UnityAction<bool>(Player.ToggleCompass));
+    public static BoolData dangerSensor = new BoolData("dangersensor", false, null);
 
     private static KeyCode[] illegalControls = new KeyCode[] {
         KeyCode.Tab,
@@ -66,7 +67,7 @@ public class Settings : MonoBehaviour
 
     public void Toggle(int toggle) {
         BoolData boolData = toggle == 0 ? compass : dangerSensor;
-        boolData.Set(!boolData.Get());
+        boolData.Set(toggles[toggle].isOn);
         boolData.Save();
     }
 
@@ -125,9 +126,11 @@ public class Settings : MonoBehaviour
     }
 
     public class BoolData : Data<bool> {
-        public BoolData(string id, bool defaultValue) : base(id, defaultValue) {
-            
+        public BoolData(string id, bool defaultValue, UnityAction<bool> listener) : base(id, defaultValue) {
+            this.listener = listener;
         }
+
+        private UnityAction<bool> listener;
 
         protected override bool Parse(string str) {
             return str == "True";
@@ -135,6 +138,11 @@ public class Settings : MonoBehaviour
 
         protected override string StateToString() {
             return state.ToString();
+        }
+
+        public override void Set(bool t) {
+            base.Set(t);
+            if (listener != null) listener.Invoke(t);
         }
     }
 }

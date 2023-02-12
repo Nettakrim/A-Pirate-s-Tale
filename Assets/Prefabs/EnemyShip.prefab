@@ -45,10 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ea89c1ecd32ad4e938ebfb56e0940d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sailSpeed: 2.5
+  sailSpeed:
+    options:
+    - 2
+    - 2.4
+    - 2.7
   rotateSpeed: 8
   aimDuration: 1
-  aimDistance: 4
+  aimDistance: 3
   shootCoodown: 1
   cannonBallPrefab: {fileID: 8325403470235004182, guid: 079f2b14e2cc41a4f80fa8f5752034fb, type: 3}
 --- !u!1 &5423663170033274686

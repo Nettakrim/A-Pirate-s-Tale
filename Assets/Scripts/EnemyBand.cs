@@ -11,15 +11,19 @@ public class EnemyBand : Group
     private Vector2Int lastIntMovement;
     private Vector3 lookDirection = new Vector3(1,0,0);
 
-    [SerializeField] private float walkSpeed;
+    [SerializeField] private DifficultyOptions<float> walkSpeed;
     [SerializeField] private float rotateSpeed;
 
     [System.NonSerialized] public float playerDistance;
 
     [System.NonSerialized] public Target targetType;
 
+    private Transform danger;
+
     private void Start() {
         movementTarget = transform.localPosition;
+        danger = transform.GetChild(0);
+        danger.SetParent(transform.parent);
     }
 
     protected override void Update() {
@@ -127,7 +131,13 @@ public class EnemyBand : Group
             lastIntMovement = intMovement;
         }
 
-        transform.localPosition = Vector3.MoveTowards(transform.localPosition, movementTarget, Time.deltaTime*walkSpeed);
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, movementTarget, Time.deltaTime*walkSpeed.Get());
+        if (Settings.dangerSensor.Get()) {
+            danger.position = transform.position;
+            danger.gameObject.SetActive(getSize(false) >= Player.instance.pirateBand.getSize(false));
+        } else {
+            danger.gameObject.SetActive(false);
+        }
 
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
     }

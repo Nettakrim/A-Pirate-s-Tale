@@ -22,13 +22,16 @@ public class Player : MonoBehaviour
     private bool inShip = true;
 
     [System.NonSerialized] public Transform bay;
-    public int[] startingPirates;
+    public DifficultyOptions<int> startingPirates;
 
     [System.NonSerialized] public PirateBand pirateBand;
 
     [System.NonSerialized] public bool canMouseMove;
 
     [System.NonSerialized] public bool hasMoved;
+
+    private static bool hasCompass;
+    public Transform compass;
 
     // Start is called before the first frame update
     void Start() {
@@ -42,8 +45,9 @@ public class Player : MonoBehaviour
         cameraT.position -= offset;
         shipTarget = ship.position;
         bandTarget = band.position;
-        pirateBand = band.GetComponent<PirateBand>();
-        pirateBand.AddPeople(startingPirates[difficulty-1]);
+        pirateBand = band.GetChild(0).GetComponent<PirateBand>();
+        pirateBand.AddPeople(startingPirates.Get());
+        hasCompass = Settings.compass.Get();
     }
 
     float Sign(float f) {
@@ -117,15 +121,30 @@ public class Player : MonoBehaviour
             lastMovement = movement;
         }
 
+        if (hasCompass) {
+            if (inShip || Vector3.Distance(band.position, ship.position) < 0.5) {
+                compass.gameObject.SetActive(false);
+            } else {
+                compass.gameObject.SetActive(true);
+                compass.GetChild(0).rotation = Quaternion.LookRotation((band.position-ship.position), Vector3.up);
+                compass.GetChild(1).rotation = Quaternion.LookRotation((band.position-bay.parent.position)-new Vector3(0,1,0), Vector3.up);
+                compass.GetChild(1).gameObject.SetActive(!Island.current.collected);
+            }
+        }
+
         band.position = Vector3.MoveTowards(band.position, bandTarget, Time.deltaTime*(inShip ? sailSpeed : walkSpeed));
         ship.position = Vector3.MoveTowards(ship.position, shipTarget, Time.deltaTime*sailSpeed);
         cameraT.position = Vector3.MoveTowards(cameraT.position, band.position, Vector3.Distance(cameraT.position, band.position)*Time.deltaTime*cameraFollowSpeed);
 
         ship.rotation = Quaternion.Lerp(ship.rotation, Quaternion.LookRotation(shipLookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
-        band.rotation = Quaternion.Lerp(band.rotation, Quaternion.LookRotation(bandLookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
+        pirateBand.transform.rotation = Quaternion.Lerp(pirateBand.transform.rotation, Quaternion.LookRotation(bandLookDirection, Vector3.up), rotateSpeed*Time.deltaTime);
     }
 
     public static Vector3 getPosition() {
         return instance.bandTarget;
+    }
+
+    public static void ToggleCompass(bool to) {
+        hasCompass = to;
     }
 }

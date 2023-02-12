@@ -21,7 +21,8 @@ public class GameManager : MonoBehaviour
 
     public static bool playing;
 
-    public static int size = 12;
+    public static int size;
+    [SerializeField] private DifficultyOptions<int> sizes;
 
     [SerializeField] private Mesh[] bookDecorations;
     [SerializeField] private MeshFilter bookDecoration;
@@ -53,13 +54,14 @@ public class GameManager : MonoBehaviour
 
     public void Play(int gameDifficulty) {
         if (playing) return;
+        difficulty = gameDifficulty;
+        size = sizes.Get();
         UpdateIslands();
         GenerateIsland(Vector3.zero, size-Random.Range(3,6), size-Random.Range(3,6));
         EnemyShip.ships = 0;
         bookDecoration.mesh = bookDecorations[1];
         playing = true;
         bookAnimation.SetTrigger("EnterWorld");
-        difficulty = gameDifficulty;
         endAtTime = Time.time + gameLength;
         postProcessAnimation.SetTrigger("Enter"+gameDifficulty);
         Settings.StopRebind();
@@ -223,7 +225,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void updateCuteProceduralDescription(bool finished) {
-        int startingPirates = Player.instance.startingPirates[difficulty-1];
+        int startingPirates = Player.instance.startingPirates.Get();
         int pirates = Player.instance.pirateBand.getSize(false);
         bool isHighscore = score > GetHighscore(difficulty);
 
@@ -246,7 +248,7 @@ public class GameManager : MonoBehaviour
         if (deltaPirates < 0 && pirates != 0) {
             desc += "\nHowever, after a series of fights while looking for treasure, only ";
             if (pirates == 1) {
-                desc += "one remained";
+                desc += "The Captain remained";
             } else {
                 desc += pirates+" remained";
             }
@@ -283,10 +285,18 @@ public class GameManager : MonoBehaviour
                 }
             }
         } else if (pirates == 0) {
-            desc += "\nHowever, after a series of fights while looking for treasure, every last pirate was downed";
-            if (score == 0) {
-                desc += ", and they didn't even manage to find any treasure...";
+            if (Player.instance.bay != null) {
+                desc += "\nHowever, after a series of fights while looking for treasure, every last pirate was downed";
+                if (score == 0) {
+                    desc += ", and they didn't even manage to find any treasure...";
+                }
             } else {
+                desc += "\nHowever, while looking for treasure, a cannonball breached the ship's hull and every last pirate perished";
+                if (score == 0) {
+                    desc += " - they didn't even manage to find any treasure...";
+                }
+            }
+            if (score != 0) {
                 desc += ".\nAtleast one may find solace in the fact they found ";
                 if (score == 1) {
                     desc += "some treasure hidden away on an island...";

@@ -7,7 +7,7 @@ public class EnemyShip : MonoBehaviour
     private Vector3 movementTarget;
     private Vector3 lastMovement;
 
-    [SerializeField] private float sailSpeed;
+    [SerializeField] private DifficultyOptions<float> sailSpeed;
     [SerializeField] private float rotateSpeed;
 
     public static int ships;
@@ -39,7 +39,7 @@ public class EnemyShip : MonoBehaviour
         if (!Player.instance.hasMoved) return;
 
         float distance = (transform.position-movementTarget).magnitude;
-        Vector3 playerOffset = Player.getPosition() - transform.position;
+        Vector3 playerOffset = Player.getPosition() - (transform.position + transform.forward);
         float playerDistance = playerOffset.magnitude;
         
         if ((distance < 0.1f)) {
@@ -64,7 +64,7 @@ public class EnemyShip : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        transform.position = Vector3.MoveTowards(transform.position, movementTarget, Time.deltaTime*sailSpeed);
+        transform.position = Vector3.MoveTowards(transform.position, movementTarget, Time.deltaTime*sailSpeed.Get());
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(lastMovement, Vector3.up), rotateSpeed*Time.deltaTime);
     
         if (aimingStage == 1) {

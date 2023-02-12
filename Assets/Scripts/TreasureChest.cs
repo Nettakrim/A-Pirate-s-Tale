@@ -6,6 +6,7 @@ public class TreasureChest : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other) {
         if (other.tag == "Player") {
+            Island.current.collected = true;
             GameManager.instance.AddToScore();
             Destroy(gameObject);
         }

@@ -12,11 +12,19 @@ public class Island : MonoBehaviour
 
     [System.NonSerialized] public int islandDifficulty;
 
+    [SerializeField] private DifficultyOptions<int> minEnemies;
+    [SerializeField] private DifficultyOptions<int> maxEnemies;
+
+    [System.NonSerialized] public bool collected;
+
+    public static Island current;
+
     public void EnterIsland(PirateBand player) {
         foreach (EnemyBand enemyBand in enemies) {
             enemyBand.targetParents.Add(player.transform);
             player.targetParents.Add(enemyBand.transform);
         }
+        current = this;
     }
 
     public void ExitIsland(PirateBand player) {
@@ -24,6 +32,7 @@ public class Island : MonoBehaviour
             enemyBand.targetParents.Clear();
         }
         player.targetParents.Clear();
+        current = null;
     }
 
     public float UpdateActive() {
@@ -83,6 +92,8 @@ public class Island : MonoBehaviour
             terrainManager.GenerateTreasure(transform, new Vector3(0,0,0));
 
             AddEnemies(terrainManager);
+        } else {
+            collected = true;
         }
     }
 
@@ -169,9 +180,9 @@ public class Island : MonoBehaviour
         int trapper = 3-(defender+chaser);
         targets[trapper] = EnemyBand.Target.Ship;
 
-        for (int i = 3; i < 6; i++) {
+        for (int i = minEnemies.Get(); i < maxEnemies.Get()+1; i++) {
             Vector3 pos = new Vector3(Random.Range(0,sizeX), 1, Random.Range(0,sizeY)) - new Vector3((sizeX-1)/2, 0, (sizeY-1)/2);
-            terrainManager.GenerateEnemies(transform, pos, this, i, targets[i-3]);
+            terrainManager.GenerateEnemies(transform, pos, this, i, targets[(i-minEnemies.Get())%3]);
         }
     }
 

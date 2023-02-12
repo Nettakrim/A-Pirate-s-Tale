@@ -12,6 +12,6 @@ public class DifficultyButton : Button
 
     public override void OnPointerEnter(PointerEventData eventData) {
         base.OnPointerEnter(eventData);
-        noteText.text = "In which a band of "+Player.instance.startingPirates[difficulty-1]+" pirates set out on a quest for treasure!\n"+message+"\nHighscore: "+GameManager.GetHighscore(difficulty)+" Treasure";
+        noteText.text = "In which a band of "+Player.instance.startingPirates.Get(difficulty)+" pirates set out on a quest for treasure!\n"+message+"\nHighscore: "+GameManager.GetHighscore(difficulty)+" Treasure";
     }
 }
