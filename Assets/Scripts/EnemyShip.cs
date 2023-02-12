@@ -24,13 +24,22 @@ public class EnemyShip : MonoBehaviour
     {
         Vector3 playerOffset = Player.getPosition() - transform.position;
         if (Mathf.Abs(playerOffset.x) > Mathf.Abs(playerOffset.z)) {
-            lastMovement = new Vector3((int)Mathf.Sign(playerOffset.x),0,0);
+            lastMovement = new Vector3((int)Mathf.Sign(playerOffset.x)*GameManager.size,0,0);
         } else {
-            lastMovement = new Vector3(0,0,(int)Mathf.Sign(playerOffset.z));
+            lastMovement = new Vector3(0,0,(int)Mathf.Sign(playerOffset.z)*GameManager.size);
         }
         Vector3 offset = new Vector3(GameManager.size/2, 0, GameManager.size/2);
         transform.position -= offset;
         movementTarget = transform.position;
+
+        //push toward player
+        int axis = Random.Range(0,2);
+        int distance = Random.Range(0,GameManager.size);
+        if (axis == 0) {
+            transform.position -= new Vector3(distance*Mathf.Sign(playerOffset.x),0,0);
+        } else {
+            transform.position -= new Vector3(0,0,distance*Mathf.Sign(playerOffset.z));
+        }
         ships++;
     }
 
@@ -95,5 +104,14 @@ public class EnemyShip : MonoBehaviour
         if (!GameManager.playing) {
             transform.GetChild(1).gameObject.SetActive(false);
         }    
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        if (other.transform.tag == transform.tag) {
+            movementTarget-=lastMovement;
+            lastMovement = -lastMovement;
+        } else if (other.transform.tag == "Player") {
+            Player.instance.pirateBand.KillRandom(3);
+        }
     }
 }

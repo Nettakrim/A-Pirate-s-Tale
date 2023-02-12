@@ -29,7 +29,7 @@ public class Settings : MonoBehaviour
 
     [SerializeField] private Toggle[] toggles;
 
-    private static int waitingOn = -1;
+    private int waitingOn = -1;
 
     private void Start() {
         inputButtons[0].text = up.Init().ToString();
@@ -54,14 +54,18 @@ public class Settings : MonoBehaviour
                     StopRebind();
                 }
             }
+            if (Input.GetMouseButtonDown(0)) StopRebind();
         }
     }
 
     public void StartRebind(int button) {
+        if (waitingOn != -1) inputButtons[waitingOn].text = inputButtons[waitingOn].text.Replace("*","");
         waitingOn = button;
+        inputButtons[waitingOn].text = "*"+inputButtons[waitingOn].text.Replace("*","")+"*";
     }
 
-    public static void StopRebind() {
+    public void StopRebind() {
+        if (waitingOn != -1) inputButtons[waitingOn].text = inputButtons[waitingOn].text.Replace("*","");
         waitingOn = -1;
     }
 

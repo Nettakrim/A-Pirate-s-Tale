@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Text timerText;
     [SerializeField] private Transform canvas;
 
+    [SerializeField] private int pausedSamples;
+
     private int score;
 
     private float endAtTime;
@@ -45,11 +47,19 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Transform cuteDescriptionParent;
 
+    [SerializeField] private Settings settings;
+
+    [SerializeField] private AudioSource[] music;
+    private int musicFade;
+    private float startingVolume;
+
     public void Start() {
         instance = this;
         Time.timeScale = 0;
+        musicFade = 1;
         hasStarted = false;
         SetTimer(Mathf.CeilToInt(gameLength));
+        startingVolume = music[1].volume;
     }
 
     public void Play(int gameDifficulty) {
@@ -64,7 +74,9 @@ public class GameManager : MonoBehaviour
         bookAnimation.SetTrigger("EnterWorld");
         endAtTime = Time.time + gameLength;
         postProcessAnimation.SetTrigger("Enter"+gameDifficulty);
-        Settings.StopRebind();
+        settings.StopRebind();
+        musicFade = 0;
+        music[1].Play();
 
         Player.instance.Play(gameDifficulty);
 
@@ -95,6 +107,7 @@ public class GameManager : MonoBehaviour
                 if (Time.timeScale == 1) {
                     canvas.GetChild(2).gameObject.SetActive(false);
                 }
+                music[0].volume = 1-Time.timeScale;
             }
 
             if (!Player.instance.hasMoved) endAtTime = Time.time + gameLength;
@@ -105,6 +118,16 @@ public class GameManager : MonoBehaviour
             if (Time.timeScale > 0) {
                 Time.timeScale = Mathf.Clamp01(Time.timeScale - (Time.timeScale)*Time.unscaledDeltaTime*8);
                 if (Time.timeScale < 0.0001f) Time.timeScale = 0;
+            }
+        }
+
+        if (musicFade == 1) music[0].volume += Time.unscaledDeltaTime;
+        if (musicFade == -1) music[1].volume -= Time.unscaledDeltaTime;
+        if (musicFade == 2) {
+            music[1].volume += Time.unscaledDeltaTime;
+            if (music[1].volume >= startingVolume) {
+                music[1].volume = startingVolume;
+                musicFade = 0;
             }
         }
     }
@@ -182,11 +205,16 @@ public class GameManager : MonoBehaviour
             bookAnimation.SetTrigger("EnterWorld");
             bookDecoration.mesh = bookDecorations[1];
             postProcessAnimation.SetTrigger("Enter"+difficulty);
+            music[1].timeSamples = pausedSamples;
+            music[1].Play();
+            musicFade = 2;
             playing = true;
         } else {
             bookAnimation.SetTrigger("EnterMain");
             bookDecoration.mesh = bookDecorations[2];
             postProcessAnimation.SetTrigger("Enter2");
+            pausedSamples = music[1].timeSamples;
+            musicFade = -1;
             playing = false;
             updateCuteProceduralDescription(false);
         }
@@ -200,6 +228,8 @@ public class GameManager : MonoBehaviour
 
         canvas.GetChild(2).GetChild(1).gameObject.SetActive(false);
         canvas.GetChild(2).GetChild(2).gameObject.SetActive(true);
+
+        hasStarted = false;
 
         if (score > GetHighscore(difficulty)) {
             SetHighscore(score);

@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5423663169429264263}
   - component: {fileID: 5423663169429264262}
+  - component: {fileID: 291747555729180952}
+  - component: {fileID: 5185212140757095383}
   m_Layer: 7
   m_Name: EnemyShip
   m_TagString: Enemy Ship
@@ -55,6 +57,35 @@ MonoBehaviour:
   aimDistance: 3
   shootCoodown: 1
   cannonBallPrefab: {fileID: 8325403470235004182, guid: 079f2b14e2cc41a4f80fa8f5752034fb, type: 3}
+--- !u!65 &291747555729180952
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5423663169429264257}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &5185212140757095383
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5423663169429264257}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!1 &5423663170033274686
 GameObject:
   m_ObjectHideFlags: 0
@@ -66,8 +97,6 @@ GameObject:
   - component: {fileID: 5423663170033274687}
   - component: {fileID: 5423663170033274659}
   - component: {fileID: 5423663170033274658}
-  - component: {fileID: 5423663170033274685}
-  - component: {fileID: 5423663170033274684}
   m_Layer: 7
   m_Name: Cube
   m_TagString: Enemy Ship
@@ -138,35 +167,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5423663170033274685
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5423663170033274686}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &5423663170033274684
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5423663170033274686}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &8593281858693085448
 GameObject:
   m_ObjectHideFlags: 0

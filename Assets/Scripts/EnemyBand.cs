@@ -99,7 +99,7 @@ public class EnemyBand : Group
             }
 
             //try to avoid chasing the player into a dead end
-            if (playerDistance <= 1.5 && island.islandDifficulty <= 2) {
+            if (playerDistance <= 1.5 && island.islandDifficulty <= 2 && Player.instance.bay.position+new Vector3(0,1,0) != Player.getPosition()) {
                 Vector2Int offset = new Vector2Int(Mathf.RoundToInt(playerOffset.x), Mathf.RoundToInt(playerOffset.z));
                 int d = Island.getDirectionFromVector(offset);
                 if (node.HasConnection(d) && island.nodes[pos.x + offset.x, pos.y + offset.y].GetNumberOfExits() == 1) {
