@@ -82,14 +82,13 @@ public class EnemyShip : MonoBehaviour
     
         if (aimingStage == 1) {
             if (Time.time - lastStageAt > aimDuration) {
-                //shoot
                 Instantiate(cannonBallPrefab, transform.GetChild(2).GetChild(1).position, Quaternion.LookRotation(Player.getPosition()-transform.position, Vector3.up));
                 aimingStage = 2;
                 lastStageAt = Time.time;
                 transform.GetChild(1).gameObject.SetActive(false);
             }
 
-            if (playerDistance > aimDistance*1.25f || Player.instance.bay != null) {
+            if (playerDistance > aimDistance*1.5f || Player.instance.bay != null) {
                 aimingStage = 0;
                 audioSource.Stop();
                 lastStageAt = (Time.time-shootCoodown)+0.5f;
@@ -113,7 +112,10 @@ public class EnemyShip : MonoBehaviour
 
         if (!GameManager.playing) {
             transform.GetChild(1).gameObject.SetActive(false);
-        }    
+        }
+        if (!GameManager.hasStarted) {
+            audioSource.Stop();
+        }
     }
 
     private void OnCollisionEnter(Collision other) {

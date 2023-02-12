@@ -2483,7 +2483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43c498e7df746fd4b9265539d483616c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localFollowSpeed: 0.2
+  localFollowSpeed: 0.3
   prefab: {fileID: 8712967857371458162, guid: b15e120956fac6143b7d9ceec783b225, type: 3}
 --- !u!82 &541193122
 AudioSource:
@@ -9055,7 +9055,7 @@ GameObject:
   - component: {fileID: 2128211006}
   - component: {fileID: 2128211007}
   m_Layer: 7
-  m_Name: Cube
+  m_Name: Model
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

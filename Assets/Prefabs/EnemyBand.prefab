@@ -75,7 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6b4df863587604ea38a8a7259d7a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localFollowSpeed: 0.15
+  localFollowSpeed: 0.2
   prefab: {fileID: 8712967857371458162, guid: 01753b957cdb6dd419085c3861295fd4, type: 3}
   walkSpeed:
     options:

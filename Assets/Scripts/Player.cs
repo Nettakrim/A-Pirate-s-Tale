@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
         if (!canMouseMove && Input.GetMouseButtonUp(0) && GameManager.playing) canMouseMove = true;
 
         float distance = (band.position-bandTarget).magnitude;
-        if (((distance < 0.1f) || ((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0))) && (x != 0 || z != 0)) {
+        if (((distance < 0.1f) || (((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0)) && distance < 0.5f)) && (x != 0 || z != 0)) {
             hasMoved = true;
             if (inShip && bay != null && bandTarget-bay.position == Vector3.up && -bay.right == new Vector3(x,0,z)) {
                 inShip = false;
