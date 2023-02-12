@@ -75,6 +75,7 @@ public class Group : MonoBehaviour
             Destroy(transform.GetChild(Random.Range(0,children-i)).gameObject);
         }
         ScheduleLayoutUpdate(0.5f);
+        Player.instance.pirateBand.onKill(false);
     }
 
     public int getSize(bool currentLayout) {
@@ -87,6 +88,8 @@ public class Group : MonoBehaviour
         updateLayoutAt = Mathf.Max(Time.time + inSeconds, updateLayoutAt);
         needsUpdate = true;
     }
+
+    public virtual void onKill(bool melee) {}
 
     public void SetLayout(int amount) {
         layout = getLayout(amount);

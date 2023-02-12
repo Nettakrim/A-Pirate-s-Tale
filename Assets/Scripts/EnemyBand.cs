@@ -144,6 +144,7 @@ public class EnemyBand : Group
 
     protected override void DistanceBehaviour(float distance, Transform child, Transform target) {
         if (distance < 0.1) {
+            Player.instance.pirateBand.onKill(true);
             Player.instance.pirateBand.ScheduleLayoutUpdate(1);
             ScheduleLayoutUpdate(1);
             Destroy(child.gameObject);

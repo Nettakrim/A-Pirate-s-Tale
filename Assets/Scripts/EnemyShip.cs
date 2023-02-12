@@ -20,8 +20,12 @@ public class EnemyShip : MonoBehaviour
 
     [SerializeField] private GameObject cannonBallPrefab;
 
+    private AudioSource audioSource;
+
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         Vector3 playerOffset = Player.getPosition() - transform.position;
         if (Mathf.Abs(playerOffset.x) > Mathf.Abs(playerOffset.z)) {
             lastMovement = new Vector3((int)Mathf.Sign(playerOffset.x)*GameManager.size,0,0);
@@ -48,7 +52,7 @@ public class EnemyShip : MonoBehaviour
         if (!Player.instance.hasMoved) return;
 
         float distance = (transform.position-movementTarget).magnitude;
-        Vector3 playerOffset = Player.getPosition() - (transform.position + transform.forward);
+        Vector3 playerOffset = Player.getPosition() - (transform.position + transform.forward/2);
         float playerDistance = playerOffset.magnitude;
         
         if ((distance < 0.1f)) {
@@ -79,16 +83,20 @@ public class EnemyShip : MonoBehaviour
         if (aimingStage == 1) {
             if (Time.time - lastStageAt > aimDuration) {
                 //shoot
-                Instantiate(cannonBallPrefab, transform.position, Quaternion.LookRotation(Player.getPosition()-transform.position, Vector3.up));
+                Instantiate(cannonBallPrefab, transform.GetChild(2).GetChild(1).position, Quaternion.LookRotation(Player.getPosition()-transform.position, Vector3.up));
                 aimingStage = 2;
                 lastStageAt = Time.time;
                 transform.GetChild(1).gameObject.SetActive(false);
             }
 
-            if (playerDistance > aimDistance*1.1f || Player.instance.bay != null) {
+            if (playerDistance > aimDistance*1.25f || Player.instance.bay != null) {
                 aimingStage = 0;
+                audioSource.Stop();
+                lastStageAt = (Time.time-shootCoodown)+0.5f;
                 transform.GetChild(1).gameObject.SetActive(false);
             }
+
+            transform.GetChild(2).rotation = Quaternion.Lerp(transform.GetChild(2).rotation, Quaternion.LookRotation(Player.getPosition() - transform.position, Vector3.up), rotateSpeed*Time.deltaTime*0.5f);
         } else if (aimingStage == 2) {
             if (Time.time - lastStageAt > shootCoodown) {
                 aimingStage = 0;
@@ -96,9 +104,11 @@ public class EnemyShip : MonoBehaviour
         } else {
             if (playerDistance < aimDistance && Player.instance.bay == null) {
                 aimingStage = 1;
+                audioSource.Play();
                 transform.GetChild(1).gameObject.SetActive(true);
                 lastStageAt = Time.time;
             }
+            transform.GetChild(2).rotation = Quaternion.Lerp(transform.GetChild(2).rotation, Quaternion.LookRotation(Player.getPosition() - transform.position, Vector3.up), rotateSpeed*Time.deltaTime*0.1f);
         }
 
         if (!GameManager.playing) {

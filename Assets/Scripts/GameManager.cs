@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioSource[] musicTemp;
     private static AudioSource[] music;
     private int musicFade;
-    private float startingVolume;
+    private static float startingVolume;
 
     private static bool firstTime = true;
 
@@ -60,15 +60,16 @@ public class GameManager : MonoBehaviour
         if (firstTime) {
             music = musicTemp;
             DontDestroyOnLoad(music[0].transform.parent);
+            startingVolume = music[1].volume;
             firstTime = false;
         } else {
-            Destroy(music[0].transform.parent.gameObject);
+            Destroy(musicTemp[0].transform.parent.gameObject);
+            music[1].Stop();
         }
         instance = this;
         Time.timeScale = 0;
         hasStarted = false;
         SetTimer(Mathf.CeilToInt(gameLength));
-        startingVolume = music[1].volume;
     }
 
     public void Play(int gameDifficulty) {
@@ -115,7 +116,9 @@ public class GameManager : MonoBehaviour
             music[1].volume += Time.unscaledDeltaTime;
             if (music[1].volume >= startingVolume) {
                 music[1].volume = startingVolume;
-                if (music[0].volume == 0) musicFade = 0;
+                if (music[0].volume == 0) {
+                    musicFade = 0;
+                }
             }
         }
 
@@ -129,12 +132,15 @@ public class GameManager : MonoBehaviour
                 if (Time.timeScale > 0.999f) Time.timeScale = 1;
                 if (Time.timeScale == 1) {
                     canvas.GetChild(2).gameObject.SetActive(false);
+                    canvas.GetChild(3).gameObject.SetActive(false);
                 }
             }
 
-            if (!Player.instance.hasMoved) endAtTime = Time.time + gameLength;
-            else if (!music[1].isPlaying && ((endAtTime - Time.time) - gameLength) < 10) music[1].Play();
-
+            if (!Player.instance.hasMoved) {
+                endAtTime = Time.time + gameLength;
+            } else if (!music[1].isPlaying && ((endAtTime - Time.time) - gameLength) < 10) {
+                music[1].Play();
+            }
             if (SetTimer(Mathf.CeilToInt(endAtTime - Time.time)) <= 0) {
                 GameOver(false);
             }
@@ -215,6 +221,8 @@ public class GameManager : MonoBehaviour
 
         canvas.GetChild(1).gameObject.SetActive(false);
         canvas.GetChild(2).gameObject.SetActive(true);
+        canvas.GetChild(3).gameObject.SetActive(true);
+
         if (!playing) {
             bookAnimation.SetTrigger("EnterWorld");
             bookDecoration.mesh = bookDecorations[1];
