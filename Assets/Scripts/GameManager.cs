@@ -227,8 +227,10 @@ public class GameManager : MonoBehaviour
             bookAnimation.SetTrigger("EnterWorld");
             bookDecoration.mesh = bookDecorations[1];
             postProcessAnimation.SetTrigger("Enter"+difficulty);
-            music[1].timeSamples = pausedSamples;
-            music[1].Play();
+            if (Player.instance.hasMoved) {
+                music[1].timeSamples = pausedSamples;
+                music[1].Play();
+            }
             musicFade = -1;
             playing = true;
         } else {
