@@ -49,14 +49,23 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Settings settings;
 
-    [SerializeField] private AudioSource[] music;
+    [SerializeField] private AudioSource[] musicTemp;
+    private static AudioSource[] music;
     private int musicFade;
     private float startingVolume;
 
+    private static bool firstTime = true;
+
     public void Start() {
+        if (firstTime) {
+            music = musicTemp;
+            DontDestroyOnLoad(music[0].transform.parent);
+            firstTime = false;
+        } else {
+            Destroy(music[0].transform.parent.gameObject);
+        }
         instance = this;
         Time.timeScale = 0;
-        musicFade = 1;
         hasStarted = false;
         SetTimer(Mathf.CeilToInt(gameLength));
         startingVolume = music[1].volume;
@@ -75,8 +84,8 @@ public class GameManager : MonoBehaviour
         endAtTime = Time.time + gameLength;
         postProcessAnimation.SetTrigger("Enter"+gameDifficulty);
         settings.StopRebind();
-        musicFade = 0;
-        music[1].Play();
+        musicFade = -1;
+        music[1].volume = startingVolume;
 
         Player.instance.Play(gameDifficulty);
 
@@ -96,6 +105,20 @@ public class GameManager : MonoBehaviour
             TogglePause();
         }
 
+        if (musicFade == 1) {
+            music[0].volume += Time.unscaledDeltaTime;
+            music[1].volume -= Time.unscaledDeltaTime*2;
+            if (music[0].volume == 1 && music[1].volume == 0) musicFade = 0;
+        }
+        if (musicFade == -1) {
+            music[0].volume -= Time.unscaledDeltaTime*4;
+            music[1].volume += Time.unscaledDeltaTime;
+            if (music[1].volume >= startingVolume) {
+                music[1].volume = startingVolume;
+                if (music[0].volume == 0) musicFade = 0;
+            }
+        }
+
         if (playing) {
             if (EnemyShip.ships < 5) {
                 GenerateShip();
@@ -107,10 +130,11 @@ public class GameManager : MonoBehaviour
                 if (Time.timeScale == 1) {
                     canvas.GetChild(2).gameObject.SetActive(false);
                 }
-                music[0].volume = 1-Time.timeScale;
             }
 
             if (!Player.instance.hasMoved) endAtTime = Time.time + gameLength;
+            else if (!music[1].isPlaying && ((endAtTime - Time.time) - gameLength) < 10) music[1].Play();
+
             if (SetTimer(Mathf.CeilToInt(endAtTime - Time.time)) <= 0) {
                 GameOver(false);
             }
@@ -118,16 +142,6 @@ public class GameManager : MonoBehaviour
             if (Time.timeScale > 0) {
                 Time.timeScale = Mathf.Clamp01(Time.timeScale - (Time.timeScale)*Time.unscaledDeltaTime*8);
                 if (Time.timeScale < 0.0001f) Time.timeScale = 0;
-            }
-        }
-
-        if (musicFade == 1) music[0].volume += Time.unscaledDeltaTime;
-        if (musicFade == -1) music[1].volume -= Time.unscaledDeltaTime;
-        if (musicFade == 2) {
-            music[1].volume += Time.unscaledDeltaTime;
-            if (music[1].volume >= startingVolume) {
-                music[1].volume = startingVolume;
-                musicFade = 0;
             }
         }
     }
@@ -207,14 +221,14 @@ public class GameManager : MonoBehaviour
             postProcessAnimation.SetTrigger("Enter"+difficulty);
             music[1].timeSamples = pausedSamples;
             music[1].Play();
-            musicFade = 2;
+            musicFade = -1;
             playing = true;
         } else {
             bookAnimation.SetTrigger("EnterMain");
             bookDecoration.mesh = bookDecorations[2];
             postProcessAnimation.SetTrigger("Enter2");
             pausedSamples = music[1].timeSamples;
-            musicFade = -1;
+            musicFade = 1;
             playing = false;
             updateCuteProceduralDescription(false);
         }
@@ -230,6 +244,7 @@ public class GameManager : MonoBehaviour
         canvas.GetChild(2).GetChild(2).gameObject.SetActive(true);
 
         hasStarted = false;
+        musicFade = 1;
 
         if (score > GetHighscore(difficulty)) {
             SetHighscore(score);

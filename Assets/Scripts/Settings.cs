@@ -27,8 +27,8 @@ public class Settings : MonoBehaviour
     };
 
     [SerializeField] private Text[] inputButtons;
-
     [SerializeField] private Toggle[] toggles;
+    [SerializeField] private Slider[] sliders;
 
     private int waitingOn = -1;
 
@@ -41,8 +41,8 @@ public class Settings : MonoBehaviour
         inputButtons[3].text = right.Init().ToString();
         toggles[0].isOn = compass.Init();
         toggles[1].isOn = dangerSensor.Init();
-        UpdateMusicVolume(PlayerPrefs.GetFloat("MusicVolume",1));
-        UpdateSFXVolume(PlayerPrefs.GetFloat("SFXVolume",1));
+        sliders[0].value = PlayerPrefs.GetFloat("MusicVolume",1);
+        sliders[1].value = PlayerPrefs.GetFloat("SFXVolume",1);
     }
 
     public void Update() {

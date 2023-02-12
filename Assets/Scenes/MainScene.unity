@@ -3780,7 +3780,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 0.8
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -4349,13 +4349,25 @@ MonoBehaviour:
   m_FillRect: {fileID: 1266748090}
   m_HandleRect: {fileID: 1979951023}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 0.01
+  m_MaxValue: 2
   m_WholeNumbers: 0
-  m_Value: 0.5
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2146518373}
+        m_TargetAssemblyTypeName: Settings, Assembly-CSharp
+        m_MethodName: UpdateMusicVolume
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &963872024
 GameObject:
   m_ObjectHideFlags: 0
@@ -4439,13 +4451,25 @@ MonoBehaviour:
   m_FillRect: {fileID: 751896485}
   m_HandleRect: {fileID: 2026013634}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 0.01
+  m_MaxValue: 2
   m_WholeNumbers: 0
-  m_Value: 0.5
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2146518373}
+        m_TargetAssemblyTypeName: Settings, Assembly-CSharp
+        m_MethodName: UpdateSFXVolume
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &965132186
 GameObject:
   m_ObjectHideFlags: 0
@@ -5556,7 +5580,7 @@ GameObject:
   - component: {fileID: 1323265431}
   - component: {fileID: 1323265430}
   m_Layer: 5
-  m_Name: Title (1)
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6595,7 +6619,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -3929954673804107076, guid: f98f0663ec4c4f547874bbb26848a423, type: 2}
   m_audioClip: {fileID: 8300000, guid: 61d945bcf6635ce41b78fe8fba8d77ae, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -7294,7 +7318,7 @@ MonoBehaviour:
   postProcessAnimation: {fileID: 653260037}
   cuteDescriptionParent: {fileID: 469820820}
   settings: {fileID: 2146518373}
-  music:
+  musicTemp:
   - {fileID: 1556097645}
   - {fileID: 796100608}
 --- !u!4 &1733673385
@@ -8965,7 +8989,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.75, y: 1, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &2128211004
 MeshRenderer:
@@ -9197,6 +9221,10 @@ MonoBehaviour:
   toggles:
   - {fileID: 1892152134}
   - {fileID: 707447906}
+  sliders:
+  - {fileID: 958091004}
+  - {fileID: 963872026}
+  audioMixer: {fileID: 24100000, guid: f98f0663ec4c4f547874bbb26848a423, type: 2}
 --- !u!33 &2221187461650810325
 MeshFilter:
   m_ObjectHideFlags: 0
