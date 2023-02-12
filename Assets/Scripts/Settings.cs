@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.Events;
+using UnityEngine.Audio;
 
 public class Settings : MonoBehaviour
 {
@@ -31,6 +32,8 @@ public class Settings : MonoBehaviour
 
     private int waitingOn = -1;
 
+    [SerializeField] private AudioMixer audioMixer;
+
     private void Start() {
         inputButtons[0].text = up.Init().ToString();
         inputButtons[1].text = left.Init().ToString();
@@ -38,6 +41,8 @@ public class Settings : MonoBehaviour
         inputButtons[3].text = right.Init().ToString();
         toggles[0].isOn = compass.Init();
         toggles[1].isOn = dangerSensor.Init();
+        UpdateMusicVolume(PlayerPrefs.GetFloat("MusicVolume",1));
+        UpdateSFXVolume(PlayerPrefs.GetFloat("SFXVolume",1));
     }
 
     public void Update() {
@@ -73,6 +78,16 @@ public class Settings : MonoBehaviour
         BoolData boolData = toggle == 0 ? compass : dangerSensor;
         boolData.Set(toggles[toggle].isOn);
         boolData.Save();
+    }
+
+    public void UpdateMusicVolume(float to) {
+        audioMixer.SetFloat("MusicVolume", Mathf.Log(to)*20);
+        PlayerPrefs.SetFloat("MusicVolume", to);
+    }
+
+    public void UpdateSFXVolume(float to) {
+        audioMixer.SetFloat("SFXVolume", Mathf.Log(to)*20);
+        PlayerPrefs.SetFloat("SFXVolume", to);
     }
 
     public abstract class Data<T> {
