@@ -22,16 +22,20 @@ public class Player : MonoBehaviour
     private bool inShip = true;
 
     [System.NonSerialized] public Transform bay;
-    [SerializeField] private int startingPirates;
+    public int[] startingPirates;
 
     [System.NonSerialized] public PirateBand pirateBand;
 
     [System.NonSerialized] public bool canMouseMove;
 
+    [System.NonSerialized] public bool hasMoved;
+
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         instance = this;
+    }
+
+    public void Play(int difficulty) {
         Vector3 offset = new Vector3(GameManager.size/2, 0, GameManager.size/2);
         ship.position -= offset;
         band.position -= offset;
@@ -39,7 +43,7 @@ public class Player : MonoBehaviour
         shipTarget = ship.position;
         bandTarget = band.position;
         pirateBand = band.GetComponent<PirateBand>();
-        pirateBand.AddPeople(startingPirates);
+        pirateBand.AddPeople(startingPirates[difficulty-1]);
     }
 
     float Sign(float f) {
@@ -51,8 +55,14 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (!GameManager.hasStarted) return;
-        float x = Sign(Input.GetAxis("Horizontal"));
-        float z = Sign(Input.GetAxis("Vertical"));
+
+        float x = (Input.GetKey(Settings.right.Get()) ? 1 : 0)-(Input.GetKey(Settings.left.Get()) ? 1 : 0);
+        float z = (Input.GetKey(Settings.up.Get()) ? 1 : 0)-(Input.GetKey(Settings.down.Get()) ? 1 : 0);
+
+        if (x == 0 && z == 0) {
+            x = Sign(Input.GetAxis("Horizontal"));
+            z = Sign(Input.GetAxis("Vertical"));
+        }
         if (canMouseMove && Input.GetMouseButton(0) && x == 0 && z == 0) {
             Vector3 mouseOffset = Camera.main.ScreenToViewportPoint(Input.mousePosition)-new Vector3(0.5f,0.63f);
             mouseOffset = new Vector3((mouseOffset.x/Screen.height)*Screen.width, mouseOffset.y, 0);
@@ -66,7 +76,8 @@ public class Player : MonoBehaviour
         if (!canMouseMove && Input.GetMouseButtonUp(0) && GameManager.playing) canMouseMove = true;
 
         float distance = (band.position-bandTarget).magnitude;
-        if ((distance < 0.1f) || ((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0))) {
+        if (((distance < 0.1f) || ((lastMovement.x!=x && z==0 && x!=0) || (lastMovement.z!=z && x==0 && z!=0))) && (x != 0 || z != 0)) {
+            hasMoved = true;
             if (inShip && bay != null && bandTarget-bay.position == Vector3.up && -bay.right == new Vector3(x,0,z)) {
                 inShip = false;
                 bay.parent.GetComponent<Island>().EnterIsland(pirateBand);

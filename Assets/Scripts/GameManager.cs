@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
@@ -35,9 +36,13 @@ public class GameManager : MonoBehaviour
 
     public static bool hasStarted;
 
-    public static int difficulty;
+    public static int difficulty = 2;
 
     [SerializeField] private float gameLength;
+
+    [SerializeField] private Animator postProcessAnimation;
+
+    [SerializeField] private Transform cuteDescriptionParent;
 
     public void Start() {
         instance = this;
@@ -47,6 +52,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void Play(int gameDifficulty) {
+        if (playing) return;
         UpdateIslands();
         GenerateIsland(Vector3.zero, size-Random.Range(3,6), size-Random.Range(3,6));
         EnemyShip.ships = 0;
@@ -55,6 +61,11 @@ public class GameManager : MonoBehaviour
         bookAnimation.SetTrigger("EnterWorld");
         difficulty = gameDifficulty;
         endAtTime = Time.time + gameLength;
+        postProcessAnimation.SetTrigger("Enter"+gameDifficulty);
+        Settings.StopRebind();
+
+        Player.instance.Play(gameDifficulty);
+
         hasStarted = true;
     }
 
@@ -80,13 +91,13 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = Mathf.Clamp01(Time.timeScale + (1-Time.timeScale)*Time.unscaledDeltaTime*8);
                 if (Time.timeScale > 0.999f) Time.timeScale = 1;
                 if (Time.timeScale == 1) {
-                    canvas.GetChild(1).gameObject.SetActive(false);
+                    canvas.GetChild(2).gameObject.SetActive(false);
                 }
             }
 
+            if (!Player.instance.hasMoved) endAtTime = Time.time + gameLength;
             if (SetTimer(Mathf.CeilToInt(endAtTime - Time.time)) <= 0) {
-                Debug.Log("WINNN");
-                playing = false;
+                GameOver(false);
             }
         } else {
             if (Time.timeScale > 0) {
@@ -163,18 +174,34 @@ public class GameManager : MonoBehaviour
     public void TogglePause() {
         if (!hasStarted) return;
 
-        canvas.GetChild(0).gameObject.SetActive(false);
-        canvas.GetChild(1).gameObject.SetActive(true);
+        canvas.GetChild(1).gameObject.SetActive(false);
+        canvas.GetChild(2).gameObject.SetActive(true);
         if (!playing) {
             bookAnimation.SetTrigger("EnterWorld");
             bookDecoration.mesh = bookDecorations[1];
+            postProcessAnimation.SetTrigger("Enter"+difficulty);
             playing = true;
         } else {
             bookAnimation.SetTrigger("EnterMain");
             bookDecoration.mesh = bookDecorations[2];
+            postProcessAnimation.SetTrigger("Enter2");
             playing = false;
+            updateCuteProceduralDescription(false);
         }
         Player.instance.canMouseMove = false;
+    }
+
+    public void GameOver(bool gotKilled) {
+        if (!playing) return;
+
+        TogglePause();
+
+        canvas.GetChild(2).GetChild(1).gameObject.SetActive(false);
+        canvas.GetChild(2).GetChild(2).gameObject.SetActive(true);
+
+        if (score > GetHighscore(difficulty)) {
+            SetHighscore(score);
+        }
     }
 
     public void AddToScore() {
@@ -185,5 +212,110 @@ public class GameManager : MonoBehaviour
     private int SetTimer(int secondsLeft) {
         timerText.text = (secondsLeft/60)+":"+(secondsLeft%60).ToString().PadLeft(2,'0');
         return secondsLeft;
+    }
+
+    public static int GetHighscore(int difficulty) {
+        return PlayerPrefs.GetInt("Highscore"+difficulty, 0);
+    }
+
+    public static void SetHighscore(int score) {
+        PlayerPrefs.SetInt("Highscore"+difficulty, score);
+    }
+
+    public void updateCuteProceduralDescription(bool finished) {
+        int startingPirates = Player.instance.startingPirates[difficulty-1];
+        int pirates = Player.instance.pirateBand.getSize(false);
+        bool isHighscore = score > GetHighscore(difficulty);
+
+        string desc = "In which a band of "+startingPirates+" pirates set out on a journey ";
+        switch (difficulty) {
+            case 1:
+                desc += "early in the morning!";
+                break;
+            case 2:
+                desc += "when the sun was high overhead!";
+                break;
+            case 3:
+                desc += "in the dead of night...";
+                break;
+        }
+
+        string highscoreString = isHighscore ? ", more than any pirate band before them!" : "!";
+
+        int deltaPirates = pirates - startingPirates;
+        if (deltaPirates < 0 && pirates != 0) {
+            desc += "\nHowever, after a series of fights while looking for treasure, only ";
+            if (pirates == 1) {
+                desc += "one remained";
+            } else {
+                desc += pirates+" remained";
+            }
+            if (score > 0) {
+                desc += "...\nLuckily, despite the odds they managed to uncover treasure ";
+                if (score == 1) {
+                    desc += "hidden away on an island!";
+                } else {
+                    desc += "on "+score+" different islands"+highscoreString;
+                }
+                if (finished) {
+                    desc+="\nAnd the winds did blow in their favour - they made it out alive and with their treasure!";
+                } else {
+                    desc+="\nOne can only hope they make it out alive, with or without their treasure...";
+                }
+            } else {
+                if (finished) {
+                    desc+=".\nUnfortunately, after much searching they couldn't find any, atleast they made it out alive...";
+                } else {
+                    desc+=" and they had yet to find any treasure.\nOne can only hope they make it out alive, with or without their treasure...";
+                }
+            }
+        } else if (deltaPirates > 0) {
+            desc += "\nAfter pillaging a series of villages, they managed to recruit even more for their cause, so a crew of "+pirates+" pirates did search the seas for treasure...";
+            if (score > 1) {
+                desc += "\nAnd treasure they did find! after avoiding other marauding bands they found treasure on "+score+" different islands"+highscoreString;
+            } else if (score == 1) {
+                desc += "\nAnd what luck! After avoiding other marauding bands they found treasure hidden away on an island!";
+            } else {
+                if (finished) {
+                    desc += "\nHowever, they could not find any treasure, despite their valiant efforts...";
+                } else {
+                    desc += "\nHowever, despite their numbers, they were yet to find any treasure...";
+                }
+            }
+        } else if (pirates == 0) {
+            desc += "\nHowever, after a series of fights while looking for treasure, every last pirate was downed";
+            if (score == 0) {
+                desc += ", and they didn't even manage to find any treasure...";
+            } else {
+                desc += ".\nAtleast one may find solace in the fact they found ";
+                if (score == 1) {
+                    desc += "some treasure hidden away on an island...";
+                } else {
+                    desc += "treasure on "+score+" different islands";
+                    if (isHighscore) {
+                        desc+= ", more than any pirate band before them...";
+                    } else {
+                        desc+=" before succumbing to their fate...";
+                    }
+                }
+            }
+        } else {
+            if (score == 0) {
+                if (finished) {
+                    desc += "\nHowever, despite searching far and wide, they could not find any treasure...";
+                } else {
+                    desc += "\nThe search for tresure begins";
+                    if (difficulty == 3) desc += "!";
+                    else desc += "...";
+                }
+            } else if (score == 1) {
+                desc += "\nAnd what luck! After avoiding other marauding bands they found treasure hidden away on an island!";
+            } else {
+                desc += "\nAnd their search for treasure was bountiful, finding treasure on "+score+" different islands"+highscoreString;
+            }
+        }
+
+        cuteDescriptionParent.GetChild(0).GetComponent<Text>().text = "Chapter "+difficulty;
+        cuteDescriptionParent.GetChild(1).GetChild(0).GetComponent<Text>().text = desc;
     }
 }

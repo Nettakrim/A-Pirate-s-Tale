@@ -15,9 +15,13 @@ public class Group : MonoBehaviour
     private bool needsUpdate;
 
     protected virtual void Update() {
-        if (needsUpdate && updateLayoutAt - Time.time <= 0) {
-            SetLayout(transform.childCount);
-            needsUpdate = false;
+        if (needsUpdate) {
+            if (updateLayoutAt - Time.time <= 0) {
+                SetLayout(transform.childCount);
+                needsUpdate = false;
+            } else if (transform.childCount == 0) {
+                onDefeat();
+            }
         }
 
         Quaternion rotation = Quaternion.Inverse(transform.rotation);
@@ -73,9 +77,11 @@ public class Group : MonoBehaviour
         ScheduleLayoutUpdate(0.5f);
     }
 
-    public int getSize() {
-        return layout.amount;
+    public int getSize(bool currentLayout) {
+        return currentLayout ? layout.amount : transform.childCount;
     }
+
+    protected virtual void onDefeat() {}
 
     public void ScheduleLayoutUpdate(float inSeconds) {
         updateLayoutAt = Mathf.Max(Time.time + inSeconds, updateLayoutAt);
@@ -84,6 +90,7 @@ public class Group : MonoBehaviour
 
     public void SetLayout(int amount) {
         layout = getLayout(amount);
+        if (amount == 0) onDefeat();
     }
 
     private static Layout[] layouts = new Layout[] {

@@ -36,6 +36,8 @@ public class EnemyShip : MonoBehaviour
 
     void Update()
     {
+        if (!Player.instance.hasMoved) return;
+
         float distance = (transform.position-movementTarget).magnitude;
         Vector3 playerOffset = Player.getPosition() - transform.position;
         float playerDistance = playerOffset.magnitude;
@@ -89,6 +91,9 @@ public class EnemyShip : MonoBehaviour
                 lastStageAt = Time.time;
             }
         }
-    
+
+        if (!GameManager.playing) {
+            transform.GetChild(1).gameObject.SetActive(false);
+        }    
     }
 }

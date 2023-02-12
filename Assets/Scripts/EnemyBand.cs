@@ -141,6 +141,12 @@ public class EnemyBand : Group
         }
     }
 
+    protected override void onDefeat() {
+        island.enemies.Remove(this);
+        Player.instance.pirateBand.targetParents.Remove(transform);
+        Destroy(gameObject);
+    }
+
     public enum Target {
         Player,
         Treasure,

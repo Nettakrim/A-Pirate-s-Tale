@@ -73,15 +73,11 @@ public class Island : MonoBehaviour
 
         AddBays();
 
-        //string s = "";
         for (int x = 0; x<sizeX; x++) {
-            //s+="\n";
             for (int y = 0; y<sizeY; y++) {
                 terrainManager.Generate(nodes[x,y], transform, new Vector3(x-(sizeX-1)/2,0,y-(sizeY-1)/2));
-                //s+=nodes[y,(sizeX-1)-x].ToString();
             }
         }
-        //print(s);
         
         if (terrainManager.mazeDifficulty != 0) {
             terrainManager.GenerateTreasure(transform, new Vector3(0,0,0));
@@ -215,6 +211,17 @@ public class Island : MonoBehaviour
 
     public static int getOppositeDirection(int direction) {
         return (direction+2)%4;
+    }
+
+    public override string ToString() {
+        string s = "";
+        for (int x = 0; x<sizeX; x++) {
+            if (x != 0) s+="\n";
+            for (int y = 0; y<sizeY; y++) {
+                s+=nodes[y,(sizeX-1)-x].ToString();
+            }
+        }
+        return s;
     }
 
     public class Node {
